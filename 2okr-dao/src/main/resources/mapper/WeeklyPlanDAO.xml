@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.coreteam.okr.dao.WeeklyPlanDAO">
+    <resultMap id="BaseResultMap" type="com.coreteam.okr.entity.WeeklyPlan">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="week" jdbcType="INTEGER" property="week"/>
+        <result column="weekly_job_satisfaction" jdbcType="INTEGER" property="weeklyJobSatisfaction"/>
+        <result column="owner_id" jdbcType="BIGINT" property="ownerId"/>
+        <result column="owner_name" jdbcType="VARCHAR" property="ownerName"/>
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="template_id" jdbcType="BIGINT" property="templateId"/>
+        <result column="created_at" jdbcType="TIMESTAMP" property="createdAt"/>
+        <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt"/>
+        <result column="deleted_at" jdbcType="TIMESTAMP" property="deletedAt"/>
+        <result column="is_deleted" jdbcType="TINYINT" property="deleted"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, week, weekly_job_satisfaction, owner_id, owner_name,organization_id,template_id,created_at, updated_at,
+        deleted_at, is_deleted
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from weekly_plan
+        where id = #{id,jdbcType=BIGINT}
+        and is_deleted=0
+    </select>
+
+    <select id="getLaskWeekForUserWeeklyPlan"  resultType="java.lang.Integer">
+        select
+        max(week)
+        from weekly_plan
+        where owner_id = #{userId,jdbcType=BIGINT}
+        and organization_id=#{organizationId,jdbcType=BIGINT}
+        and template_id=#{templateId,jdbcType=BIGINT}
+        and week<![CDATA[<]]>#{week,jdbcType=INTEGER}
+        and is_deleted=0
+    </select>
+
+    <select id="getUserWeeklyPlanByOrg" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from weekly_plan
+        where owner_id = #{userId,jdbcType=BIGINT}
+        and week= #{week,jdbcType=BIGINT}
+        and organization_id=#{organizationId,jdbcType=BIGINT}
+        and template_id=#{templateId,jdbcType=BIGINT}
+        and is_deleted=0
+    </select>
+
+    <select id="listOrgWeeklyPlanReported" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from weekly_plan
+        where id in
+        (
+        select weekly_plan_id from weekly_report_send_record
+            where week=#{week,jdbcType=BIGINT} and is_deleted=0
+            and  sender_id in (select DISTINCT user_id from member where `type`='ORGANIZATION' and organization_id = #{organizationId,jdbcType=BIGINT} and status='NORMAL' and is_deleted=0)
+        and receiver_id = #{userId,jdbcType=BIGINT}
+        )
+        and organization_id=#{organizationId,jdbcType=BIGINT}
+        and template_id=#{templateId,jdbcType=BIGINT}
+        and is_deleted=0
+    </select>
+    <select id="listTeamWeeklyPlanReportSummary" resultType="com.coreteam.okr.dto.plan.WeeklyPlanReportSummaryDTO">
+        SELECT
+        `date`,
+        SUM(IF (categorie_id in (select id from weekly_plan_template_item where need_carry=1 and template_id= (select id from weekly_plan_template where `type`='ORGANIZATION' and entity_id = #{organizationId,jdbcType=BIGINT})),1,0)) 'issuesNum',
+        SUM(IF (categorie_id in (select id from weekly_plan_template_item where need_carry=0 and template_id= (select id from weekly_plan_template where `type`='ORGANIZATION' and entity_id = #{organizationId,jdbcType=BIGINT})),1,0))AS 'completionNum',
+        COUNT(categorie_id) AS totalNum,
+        TRUNCATE(SUM(job_statisfaction)/COUNT(job_statisfaction),2)AS avgFeedBack
+        FROM weekly_plan_item_dalily_status
+        WHERE WEEK=#{week,jdbcType=BIGINT}
+        and weekly_plan_id in
+            (
+            select weekly_plan_id from weekly_report_send_record
+            where week=#{week,jdbcType=BIGINT} and is_deleted=0
+            and  sender_id in (select DISTINCT user_id from member where `type`='ORGANIZATION' and organization_id = #{organizationId,jdbcType=BIGINT} and status='NORMAL' and is_deleted=0)
+            and receiver_id = #{userId,jdbcType=BIGINT}
+            )
+        and organization_id=#{organizationId,jdbcType=BIGINT}
+        and template_id=#{templateId,jdbcType=BIGINT}
+        AND is_deleted=0
+        GROUP BY `date`
+    </select>
+
+    <update id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        update weekly_plan
+        set is_deleted = 1, deleted_at = now()
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <insert id="insert" parameterType="com.coreteam.okr.entity.WeeklyPlan" useGeneratedKeys="true" keyColumn="id"
+            keyProperty="id">
+        insert into weekly_plan (id, week, weekly_job_satisfaction,
+        owner_id, owner_name, organization_id,template_id,created_at,
+        updated_at, deleted_at, is_deleted
+        )
+        values (#{id,jdbcType=BIGINT}, #{week,jdbcType=INTEGER}, #{weeklyJobSatisfaction,jdbcType=INTEGER},
+        #{ownerId,jdbcType=BIGINT},
+        #{ownerName,jdbcType=VARCHAR},#{organizationId,jdbcType=BIGINT},#{templateId,jdbcType=BIGINT},
+        #{createdAt,jdbcType=TIMESTAMP},
+        #{updatedAt,jdbcType=TIMESTAMP}, #{deletedAt,jdbcType=TIMESTAMP}, #{deleted,jdbcType=TINYINT}
+        )
+    </insert>
+    <insert id="insertSelective" parameterType="com.coreteam.okr.entity.WeeklyPlan" useGeneratedKeys="true"
+            keyColumn="id"
+            keyProperty="id">
+        insert into weekly_plan
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="week != null">
+                week,
+            </if>
+            <if test="weeklyJobSatisfaction != null">
+                weekly_job_satisfaction,
+            </if>
+            <if test="ownerId != null">
+                owner_id,
+            </if>
+            <if test="ownerName != null">
+                owner_name,
+            </if>
+            <if test="organizationId != null">
+                organization_id,
+            </if>
+            <if test="templateId != null">
+                template_id,
+            </if>
+            <if test="createdAt != null">
+                created_at,
+            </if>
+            <if test="updatedAt != null">
+                updated_at,
+            </if>
+            <if test="deletedAt != null">
+                deleted_at,
+            </if>
+            <if test="deleted != null">
+                is_deleted,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="week != null">
+                #{week,jdbcType=INTEGER},
+            </if>
+            <if test="weeklyJobSatisfaction != null">
+                #{weeklyJobSatisfaction,jdbcType=INTEGER},
+            </if>
+            <if test="ownerId != null">
+                #{ownerId,jdbcType=BIGINT},
+            </if>
+            <if test="ownerName != null">
+                #{ownerName,jdbcType=VARCHAR},
+            </if>
+            <if test="organizationId != null">
+                #{organizationId,jdbcType=BIGINT},
+            </if>
+            <if test="templateId != null">
+                #{templateId,jdbcType=BIGINT},
+            </if>
+            <if test="createdAt != null">
+                #{createdAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatedAt != null">
+                #{updatedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deletedAt != null">
+                #{deletedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deleted != null">
+                #{deleted,jdbcType=TINYINT},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.coreteam.okr.entity.WeeklyPlan">
+        update weekly_plan
+        <set>
+            <if test="week != null">
+                week = #{week,jdbcType=INTEGER},
+            </if>
+            <if test="weeklyJobSatisfaction != null">
+                weekly_job_satisfaction = #{weeklyJobSatisfaction,jdbcType=INTEGER},
+            </if>
+            <if test="ownerId != null">
+                owner_id = #{ownerId,jdbcType=BIGINT},
+            </if>
+            <if test="ownerName != null">
+                owner_name = #{ownerName,jdbcType=VARCHAR},
+            </if>
+            <if test="organizationId != null">
+                organization_id=#{organizationId,jdbcType=BIGINT},
+            </if>
+            <if test="templateId != null">
+                template_id=#{templateId,jdbcType=BIGINT},
+            </if>
+            <if test="createdAt != null">
+                created_at = #{createdAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatedAt != null">
+                updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deletedAt != null">
+                deleted_at = #{deletedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deleted != null">
+                is_deleted = #{deleted,jdbcType=TINYINT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.coreteam.okr.entity.WeeklyPlan">
+        update weekly_plan
+        set week = #{week,jdbcType=INTEGER},
+        weekly_job_satisfaction = #{weeklyJobSatisfaction,jdbcType=INTEGER},
+        owner_id = #{ownerId,jdbcType=BIGINT},
+        owner_name = #{ownerName,jdbcType=VARCHAR},
+        organization_id=#{organizationId,jdbcType=BIGINT},
+        template_id=#{templateId,jdbcType=BIGINT},
+        created_at = #{createdAt,jdbcType=TIMESTAMP},
+        updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+        deleted_at = #{deletedAt,jdbcType=TIMESTAMP},
+        is_deleted = #{deleted,jdbcType=TINYINT}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateOwnerName">
+        update weekly_plan
+        set owner_name = #{userName,jdbcType=VARCHAR}
+        where owner_id = #{userId,jdbcType=BIGINT}
+    </update>
+</mapper>

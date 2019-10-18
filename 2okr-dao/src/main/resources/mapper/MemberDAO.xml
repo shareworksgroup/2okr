@@ -1,0 +1,427 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.coreteam.okr.dao.MemberDAO">
+    <resultMap id="BaseResultMap" type="com.coreteam.okr.entity.Member">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="team_id" jdbcType="BIGINT" property="teamId"/>
+        <result column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="user_name" jdbcType="VARCHAR" property="userName"/>
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="invite_id" jdbcType="BIGINT" property="inviteId"/>
+        <result column="type" jdbcType="VARCHAR" property="type"/>
+        <result column="role" jdbcType="VARCHAR" property="role"/>
+        <result column="status" jdbcType="VARCHAR" property="status"/>
+        <result column="created_at" jdbcType="TIMESTAMP" property="createdAt"/>
+        <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt"/>
+        <result column="deleted_at" jdbcType="TIMESTAMP" property="deletedAt"/>
+        <result column="is_deleted" jdbcType="TINYINT" property="deleted"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, team_id, user_id, user_name,organization_id,invite_id,`type`, `role`, `status`,created_at, updated_at,
+        deleted_at,
+        is_deleted
+    </sql>
+    <sql id="is_deleted_cond">
+        and is_deleted = 0
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from member
+        where id = #{id,jdbcType=BIGINT}
+        <include refid="is_deleted_cond"/>
+    </select>
+
+    <select id="listUser" parameterType="java.lang.Long" resultType="com.coreteam.okr.dto.user.SimpleUserInfoDTO">
+        select
+        distinct
+        user_id as id,
+        user_name as userName
+        from member
+        where status='NORMAL'
+        <if test="type == 'ORGANIZATION'">
+            and organization_id = #{entityId,jdbcType=BIGINT}
+            and `type`='ORGANIZATION'
+        </if>
+        <if test="type == 'TEAM'">
+            and team_id = #{entityId,jdbcType=BIGINT}
+            and `type`='TEAM'
+        </if>
+        and is_deleted=0
+    </select>
+
+
+
+    <select id="listAllMembersByUser" resultType="com.coreteam.okr.dto.member.MemberSimpleInfoDTO">
+        select
+        DISTINCT user_id as userId, user_name as userName
+        from member
+        where status='NORMAL'
+        and organization_id in (SELECT DISTINCT organization_id FROM member WHERE user_id= #{userId,jdbcType=BIGINT})
+        <include refid="is_deleted_cond"/>
+    </select>
+
+    <select id="findMemberByInvitedId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from member
+        where invite_id = #{id,jdbcType=BIGINT}
+        <include refid="is_deleted_cond"/>
+    </select>
+
+    <select id="findOrgAllTeamMembers" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from member
+        where organization_id = #{id,jdbcType=BIGINT}
+        and `type`='TEAM'
+        and status='NORMAL'
+        <include refid="is_deleted_cond"/>
+    </select>
+
+    <select id="findTeamMember" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from member
+        where team_id = #{teamId,jdbcType=BIGINT}
+        and `type`='TEAM'
+        and user_id = #{userId,jdbcType=BIGINT}
+        and status='NORMAL'
+        <include refid="is_deleted_cond"/>
+    </select>
+    <select id="findOrganizationMember" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from member
+        where organization_id = #{organizationId,jdbcType=BIGINT}
+        and `type`='ORGANIZATION'
+        and user_id = #{userId,jdbcType=BIGINT}
+        and status='NORMAL'
+        <include refid="is_deleted_cond"/>
+    </select>
+
+    <select id="findTeamMemberIgnoreStatus" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from member
+        where team_id = #{teamId,jdbcType=BIGINT}
+        and `type`='TEAM'
+        and user_id = #{userId,jdbcType=BIGINT}
+        and (status='NORMAL' or status='WAITING_ACCEPT')
+        <include refid="is_deleted_cond"/>
+    </select>
+    <select id="findOrganizationMemberIgnoreStatus" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from member
+        where organization_id = #{organizationId,jdbcType=BIGINT}
+        and `type`='ORGANIZATION'
+        and user_id = #{userId,jdbcType=BIGINT}
+        and (status='NORMAL' or status='WAITING_ACCEPT')
+        <include refid="is_deleted_cond"/>
+    </select>
+
+    <select id="findTeamMemberByEmailBeforeRegister" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from member
+        where team_id = #{teamId,jdbcType=BIGINT}
+        and `type`='TEAM'
+        and user_name = #{email,jdbcType=VARCHAR}
+        and (status='NORMAL' or status='WAITING_REGISTER')
+        <include refid="is_deleted_cond"/>
+    </select>
+    <select id="findOrganizationMemberByEmailBeforeRegister" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from member
+        where organization_id = #{organizationId,jdbcType=BIGINT}
+        and `type`='ORGANIZATION'
+        and user_name = #{email,jdbcType=VARCHAR}
+        and status='WAITING_REGISTER'
+        <include refid="is_deleted_cond"/>
+    </select>
+
+    <select id="listTeamMemberStatistics" resultType="com.coreteam.okr.dto.member.MemberStatisticsDTO">
+        select
+        id,invite_id as inviteId, organization_id as 'organizationId',team_id as 'teamId',`role`,`status`,user_id as
+        userId,user_name as
+        userName,
+        (select count(*) from member m where m.user_id = t.user_id AND m.`type`='TEAM' AND m.is_deleted=0 and status='NORMAL' ) as
+        groupCount,
+        (select count(id) from objective o where o.organization_id=t.organization_id and o.is_deleted=0
+        and ( YEAR(o.period_start_time)=YEAR(NOW()) or YEAR(o.period_end_time)=YEAR(NOW()))
+        and (
+        <!--自己的okr-->
+        o.owner_id = t.user_id
+        <!--自己拥有k-r的okr-->
+        or
+        o.id in (SELECT DISTINCT objective_id FROM key_result kr WHERE kr.owner_id = t.user_id))
+        ) as okrNum
+        from member t
+        where team_id = #{teamId,jdbcType=BIGINT}
+        and `type`='TEAM'
+        <if test="name != null">
+            and user_name like CONCAT(CONCAT('%',#{name}),'%')
+        </if>
+        <include refid="is_deleted_cond"/>
+        order by `status`
+    </select>
+    <select id="listOrganizationMemberStatistics" resultType="com.coreteam.okr.dto.member.MemberStatisticsDTO">
+        select
+        id,invite_id as inviteId,organization_id as 'organizationId',team_id as 'teamId',`role`,`status`,user_id as
+        userId,user_name as
+        userName,
+        (select count(*) from member m where m.user_id = t.user_id AND m.`type`='ORGANIZATION' AND m.is_deleted=0 and status='NORMAL' ) as
+        groupCount,
+        (select count(id) from objective o where o.organization_id=#{organizationId,jdbcType=BIGINT} and o.is_deleted=0
+         and ( YEAR(o.period_start_time)=YEAR(NOW()) or YEAR(o.period_end_time)=YEAR(NOW()))
+         and (
+            <!--自己的okr-->
+            o.owner_id = t.user_id
+            <!--自己拥有k-r的okr-->
+            or
+            o.id in (SELECT DISTINCT objective_id FROM key_result kr WHERE kr.owner_id = t.user_id))
+        ) as okrNum
+        from member t
+        where organization_id = #{organizationId,jdbcType=BIGINT}
+        and `type`='ORGANIZATION'
+        <if test="name != null">
+            and user_name like CONCAT(CONCAT('%',#{name}),'%')
+        </if>
+        <include refid="is_deleted_cond"/>
+        order by `status`
+    </select>
+    <select id="listTeamMembers" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from member
+        where team_id = #{teamId,jdbcType=BIGINT}
+        and `type`='TEAM'
+        <if test="onlyOwner==true">
+            and `role`='OWNER'
+        </if>
+        and status='NORMAL'
+        <include refid="is_deleted_cond"/>
+    </select>
+    <select id="listOrganizationMembers" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from member
+        where organization_id = #{organizationId,jdbcType=BIGINT}
+        and `type`='ORGANIZATION'
+        <if test="onlyOwner==true">
+            and `role`='OWNER'
+        </if>
+        and status='NORMAL'
+        <include refid="is_deleted_cond"/>
+    </select>
+
+    <select id="countOrganizationMember" resultType="java.lang.Integer">
+        select
+        count(*)
+        from member
+        where organization_id = #{id,jdbcType=BIGINT}
+        and `type`='ORGANIZATION'
+        and status='NORMAL'
+        <include refid="is_deleted_cond"/>
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from member
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+
+    <update id="updateMemberUserName" >
+        update member
+        set user_name = #{userName,jdbcType=VARCHAR}
+        where user_id = #{userId,jdbcType=BIGINT}
+    </update>
+
+    <delete id="deleteAll">
+        delete from member
+    </delete>
+    <insert id="insert" parameterType="com.coreteam.okr.entity.Member" useGeneratedKeys="true" keyProperty="id"
+            keyColumn="id">
+        insert into member (team_id, user_id,user_name,
+        organization_id, invite_id,`type`,`role`, `status`,created_at,
+        updated_at, deleted_at, is_deleted
+        )
+        values (#{teamId,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT},#{userName,jdbcType=VARCHAR},
+        #{organizationId,jdbcType=BIGINT},
+        #{inviteId,jdbcType=BIGINT},#{type,jdbcType=VARCHAR},#{role,jdbcType=VARCHAR},#{status,jdbcType=VARCHAR},
+        #{createdAt,jdbcType=TIMESTAMP},
+        #{updatedAt,jdbcType=TIMESTAMP}, #{deletedAt,jdbcType=TIMESTAMP}, #{deleted,jdbcType=TINYINT}
+        )
+    </insert>
+    <insert id="insertSelective" parameterType="com.coreteam.okr.entity.Member" useGeneratedKeys="true" keyProperty="id"
+            keyColumn="id">
+        insert into member
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="teamId != null">
+                team_id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="userName != null">
+                user_name,
+            </if>
+            <if test="organizationId != null">
+                organization_id,
+            </if>
+            <if test="inviteId != null">
+                invite_id,
+            </if>
+            <if test="type != null">
+                `type`,
+            </if>
+            <if test="role != null">
+                `role`,
+            </if>
+            <if test="status != null">
+                `status`,
+            </if>
+            <if test="createdAt != null">
+                created_at,
+            </if>
+            <if test="updatedAt != null">
+                updated_at,
+            </if>
+            <if test="deletedAt != null">
+                deleted_at,
+            </if>
+            <if test="deleted != null">
+                is_deleted,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="teamId != null">
+                #{teamId,jdbcType=BIGINT},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=BIGINT},
+            </if>
+            <if test="userName != null">
+                #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="organizationId != null">
+                #{organizationId,jdbcType=BIGINT},
+            </if>
+            <if test="inviteId != null">
+                #{inviteId,jdbcType=BIGINT},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=VARCHAR},
+            </if>
+            <if test="role != null">
+                #{role,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="createdAt != null">
+                #{createdAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatedAt != null">
+                #{updatedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deletedAt != null">
+                #{deletedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deleted != null">
+                #{deleted,jdbcType=TINYINT},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.coreteam.okr.entity.Member">
+        update member
+        <set>
+            <if test="teamId != null">
+                team_id = #{teamId,jdbcType=BIGINT},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=BIGINT},
+            </if>
+            <if test="userName != null">
+                user_name = #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="organizationId != null">
+                organization_id = #{organizationId,jdbcType=BIGINT},
+            </if>
+            <if test="inviteId != null">
+                invite_id=#{inviteId,jdbcType=BIGINT},
+            </if>
+            <if test="type != null">
+                `type` = #{type,jdbcType=VARCHAR},
+            </if>
+            <if test="role != null">
+                `role` = #{role,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                `status` = #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="createdAt != null">
+                created_at = #{createdAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatedAt != null">
+                updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deletedAt != null">
+                deleted_at = #{deletedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deleted != null">
+                is_deleted = #{deleted,jdbcType=TINYINT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+        <include refid="is_deleted_cond"/>
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.coreteam.okr.entity.Member">
+        update member
+        set team_id = #{teamId,jdbcType=BIGINT},
+        user_id = #{userId,jdbcType=BIGINT},
+        user_name = #{userName,jdbcType=VARCHAR},
+        organization_id = #{organizationId,jdbcType=BIGINT},
+        invite_id=#{inviteId,jdbcType=BIGINT},
+        `type` = #{type,jdbcType=VARCHAR},
+        `role` = #{role,jdbcType=VARCHAR},
+        `status` = #{status,jdbcType=VARCHAR},
+        created_at = #{createdAt,jdbcType=TIMESTAMP},
+        updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+        deleted_at = #{deletedAt,jdbcType=TIMESTAMP},
+        is_deleted = #{deleted,jdbcType=TINYINT}
+        where id = #{id,jdbcType=BIGINT}
+        <include refid="is_deleted_cond"/>
+    </update>
+    <update id="updateTeamMemberRole">
+        update member
+        set
+        `role` = #{role,jdbcType=VARCHAR}
+        where team_id = #{teamId,jdbcType=BIGINT}
+        and `type`='TEAM'
+        and status='NORMAL'
+        <if test="userId != null">
+            and user_id = #{userId,jdbcType=BIGINT}
+        </if>
+        <include refid="is_deleted_cond"/>
+    </update>
+    <update id="updateOrganizationMemberRole">
+        update member
+        set
+        `role` = #{role,jdbcType=VARCHAR}
+        where organization_id = #{organizationId,jdbcType=BIGINT}
+        and `type`='ORGANIZATION'
+        and status='NORMAL'
+        <if test="userId != null">
+            and user_id = #{userId,jdbcType=BIGINT}
+        </if>
+        <include refid="is_deleted_cond"/>
+    </update>
+</mapper>

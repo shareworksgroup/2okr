@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.coreteam.okr.dao.PlanObjectiveLinkDAO">
+    <resultMap id="BaseResultMap" type="com.coreteam.okr.entity.PlanObjectiveLink">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="plan_id" jdbcType="BIGINT" property="planId"/>
+        <result column="objective_id" jdbcType="BIGINT" property="objectiveId"/>
+        <result column="created_at" jdbcType="TIMESTAMP" property="createdAt"/>
+        <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt"/>
+        <result column="deleted_at" jdbcType="TIMESTAMP" property="deletedAt"/>
+        <result column="is_deleted" jdbcType="TINYINT" property="deleted"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, plan_id, objective_id, created_at, updated_at, deleted_at, is_deleted
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from plan_objective_link
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <update id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        update plan_objective_link
+        set is_deleted = 1, deleted_at = now()
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <insert id="insert" parameterType="com.coreteam.okr.entity.PlanObjectiveLink">
+        insert into plan_objective_link (id, plan_id, objective_id,
+        created_at, updated_at, deleted_at,
+        is_deleted)
+        values (#{id,jdbcType=BIGINT}, #{planId,jdbcType=BIGINT}, #{objectiveId,jdbcType=BIGINT},
+        #{createdAt,jdbcType=TIMESTAMP}, #{updatedAt,jdbcType=TIMESTAMP}, #{deletedAt,jdbcType=TIMESTAMP},
+        #{deleted,jdbcType=TINYINT})
+    </insert>
+    <insert id="insertSelective" parameterType="com.coreteam.okr.entity.PlanObjectiveLink" useGeneratedKeys="true" keyColumn="id"
+            keyProperty="id">
+        insert into plan_objective_link
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="planId != null">
+                plan_id,
+            </if>
+            <if test="objectiveId != null">
+                objective_id,
+            </if>
+            <if test="createdAt != null">
+                created_at,
+            </if>
+            <if test="updatedAt != null">
+                updated_at,
+            </if>
+            <if test="deletedAt != null">
+                deleted_at,
+            </if>
+            <if test="deleted != null">
+                is_deleted,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="planId != null">
+                #{planId,jdbcType=BIGINT},
+            </if>
+            <if test="objectiveId != null">
+                #{objectiveId,jdbcType=BIGINT},
+            </if>
+            <if test="createdAt != null">
+                #{createdAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatedAt != null">
+                #{updatedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deletedAt != null">
+                #{deletedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deleted != null">
+                #{deleted,jdbcType=TINYINT},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.coreteam.okr.entity.PlanObjectiveLink">
+        update plan_objective_link
+        <set>
+            <if test="planId != null">
+                plan_id = #{planId,jdbcType=BIGINT},
+            </if>
+            <if test="objectiveId != null">
+                objective_id = #{objectiveId,jdbcType=BIGINT},
+            </if>
+            <if test="createdAt != null">
+                created_at = #{createdAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatedAt != null">
+                updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deletedAt != null">
+                deleted_at = #{deletedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deleted != null">
+                is_deleted = #{deleted,jdbcType=TINYINT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.coreteam.okr.entity.PlanObjectiveLink">
+        update plan_objective_link
+        set plan_id = #{planId,jdbcType=BIGINT},
+        objective_id = #{objectiveId,jdbcType=BIGINT},
+        created_at = #{createdAt,jdbcType=TIMESTAMP},
+        updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+        deleted_at = #{deletedAt,jdbcType=TIMESTAMP},
+        is_deleted = #{deleted,jdbcType=TINYINT}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <update id="deleteByPlanIdAndObjectiveId">
+        update plan_objective_link
+        set is_deleted = 1, deleted_at = now()
+        where plan_id = #{planId,jdbcType=BIGINT}
+        and objective_id=#{objectiveId,jdbcType=BIGINT}
+    </update>
+
+    <update id="deleteAllObjectiveLinked">
+        update plan_objective_link
+        set is_deleted = 1, deleted_at = now()
+        where plan_id = #{planId,jdbcType=BIGINT}
+    </update>
+
+
+
+</mapper>

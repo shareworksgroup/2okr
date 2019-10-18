@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.coreteam.okr.dao.InviteDAO">
+    <resultMap id="BaseResultMap" type="com.coreteam.okr.entity.Invite">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="team_id" jdbcType="BIGINT" property="teamId"/>
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
+        <result column="type" jdbcType="VARCHAR" property="type"/>
+        <result column="accept" jdbcType="TINYINT" property="accept"/>
+        <result column="sended" jdbcType="TINYINT" property="sended"/>
+        <result column="invite_type" jdbcType="VARCHAR" property="inviteType"/>
+        <result column="inviter_id" jdbcType="BIGINT" property="inviterId"/>
+        <result column="inviter_name" jdbcType="VARCHAR" property="inviterName"/>
+        <result column="retry_times" jdbcType="INTEGER" property="retryTimes"/>
+        <result column="created_at" jdbcType="TIMESTAMP" property="createdAt"/>
+        <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt"/>
+        <result column="deleted_at" jdbcType="TIMESTAMP" property="deletedAt"/>
+        <result column="is_deleted" jdbcType="TINYINT" property="deleted"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, team_id, organization_id, email, `type`,invite_type,accept,sended,inviter_id,inviter_name,retry_times, created_at, updated_at, deleted_at,
+        is_deleted
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from invite
+        where id = #{id,jdbcType=BIGINT} and is_deleted = 0
+    </select>
+
+    <select id="listRegisterInvitedEmail" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from invite
+        where sended=1
+        and   accept=0
+        and   email=#{email,jdbcType=VARCHAR}
+        and   invite_type="REGISTER"
+        and   is_deleted = 0
+    </select>
+
+
+    <update id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        update invite
+        set is_deleted = 1, deleted_at = now()
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <insert id="insert" parameterType="com.coreteam.okr.entity.Invite" useGeneratedKeys="true" keyColumn="id"
+            keyProperty="id">
+        insert into invite (team_id, organization_id,
+        email, `type`,invite_type,accept,sended,inviter_id,inviter_name,retry_times,created_at,
+        updated_at, deleted_at, is_deleted
+        )
+        values (#{teamId,jdbcType=BIGINT}, #{organizationId,jdbcType=BIGINT},
+        #{email,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR},#{inviteType,jdbcType=VARCHAR},
+        #{accept,jdbcType=TINYINT},#{sended,jdbcType=TINYINT},#{inviterId,jdbcType=BIGINT},
+        #{inviterName,jdbcType=VARCHAR},#{retryTimes,jdbcType=INTEGER},#{createdAt,jdbcType=TIMESTAMP},
+        #{updatedAt,jdbcType=TIMESTAMP}, #{deletedAt,jdbcType=TIMESTAMP}, #{deleted,jdbcType=TINYINT}
+        )
+    </insert>
+    <insert id="insertSelective" parameterType="com.coreteam.okr.entity.Invite" useGeneratedKeys="true" keyColumn="id"
+            keyProperty="id">
+        insert into invite
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="teamId != null">
+                team_id,
+            </if>
+            <if test="organizationId != null">
+                organization_id,
+            </if>
+            <if test="email != null">
+                email,
+            </if>
+            <if test="type != null">
+                `type`,
+            </if>
+            <if test="inviteType != null">
+                invite_type,
+            </if>
+            <if test="accept != null">
+                accept,
+            </if>
+            <if test="sended != null">
+                sended,
+            </if>
+            <if test="inviterId != null">
+                inviter_id,
+            </if>
+            <if test="inviterName != null">
+                inviter_name,
+            </if>
+            <if test="retryTimes != null">
+                retry_times,
+            </if>
+            <if test="createdAt != null">
+                created_at,
+            </if>
+            <if test="updatedAt != null">
+                updated_at,
+            </if>
+            <if test="deletedAt != null">
+                deleted_at,
+            </if>
+            <if test="deleted != null">
+                is_deleted,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="teamId != null">
+                #{teamId,jdbcType=BIGINT},
+            </if>
+            <if test="organizationId != null">
+                #{organizationId,jdbcType=BIGINT},
+            </if>
+            <if test="email != null">
+                #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=VARCHAR},
+            </if>
+            <if test="inviteType != null">
+                #{inviteType,jdbcType=VARCHAR},
+            </if>
+            <if test="accept != null">
+                #{accept,jdbcType=TINYINT},
+            </if>
+            <if test="sended != null">
+                #{sended,jdbcType=TINYINT},
+            </if>
+            <if test="inviterId != null">
+                #{inviterId,jdbcType=BIGINT},
+            </if>
+            <if test="inviterName != null">
+                #{inviterName,jdbcType=VARCHAR},
+            </if>
+            <if test="retryTimes != null">
+                #{retryTimes,jdbcType=INTEGER},
+            </if>
+            <if test="createdAt != null">
+                #{createdAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatedAt != null">
+                #{updatedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deletedAt != null">
+                #{deletedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deleted != null">
+                #{deleted,jdbcType=TINYINT},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.coreteam.okr.entity.Invite">
+        update invite
+        <set>
+            <if test="teamId != null">
+                team_id = #{teamId,jdbcType=BIGINT},
+            </if>
+            <if test="organizationId != null">
+                organization_id = #{organizationId,jdbcType=BIGINT},
+            </if>
+            <if test="email != null">
+                email = #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                type = #{type,jdbcType=VARCHAR},
+            </if>
+            <if test="inviteType != null">
+                invite_type = #{inviteType,jdbcType=VARCHAR},
+            </if>
+            <if test="accept != null">
+                accept= #{accept,jdbcType=TINYINT},
+            </if>
+            <if test="sended != null">
+                sended= #{sended,jdbcType=TINYINT},
+            </if>
+            <if test="inviterId != null">
+                inviter_id=#{inviterId,jdbcType=BIGINT},
+            </if>
+            <if test="inviterName != null">
+                inviter_name=#{inviterName,jdbcType=VARCHAR},
+            </if>
+            <if test="retryTimes != null">
+                retry_times= #{retryTimes,jdbcType=INTEGER},
+            </if>
+            <if test="createdAt != null">
+                created_at = #{createdAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatedAt != null">
+                updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deletedAt != null">
+                deleted_at = #{deletedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deleted != null">
+                is_deleted = #{deleted,jdbcType=TINYINT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.coreteam.okr.entity.Invite">
+        update invite
+        set team_id = #{teamId,jdbcType=BIGINT},
+        organization_id = #{organizationId,jdbcType=BIGINT},
+        email = #{email,jdbcType=VARCHAR},
+        `type` = #{type,jdbcType=VARCHAR},
+        invite_type = #{inviteType,jdbcType=VARCHAR},
+        accept= #{accept,jdbcType=TINYINT},
+        sended= #{sended,jdbcType=TINYINT},
+        inviter_id=#{inviterId,jdbcType=BIGINT},
+        inviter_name=#{inviterName,jdbcType=VARCHAR},
+        retry_times= #{retryTimes,jdbcType=INTEGER},
+        created_at = #{createdAt,jdbcType=TIMESTAMP},
+        updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+        deleted_at = #{deletedAt,jdbcType=TIMESTAMP},
+        is_deleted = #{deleted,jdbcType=TINYINT}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+</mapper>

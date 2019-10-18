@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.coreteam.okr.dao.KeyResultCommentDAO">
+    <resultMap id="BaseResultMap" type="com.coreteam.okr.entity.KeyResultComment">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="key_result_id" jdbcType="BIGINT" property="keyResultId"/>
+        <result column="comment_user_id" jdbcType="BIGINT" property="commentUserId"/>
+        <result column="comment_user_name" jdbcType="VARCHAR" property="commentUserName"/>
+        <result column="comment" jdbcType="VARCHAR" property="comment"/>
+        <result column="created_at" jdbcType="TIMESTAMP" property="createdAt"/>
+        <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt"/>
+        <result column="deleted_at" jdbcType="TIMESTAMP" property="deletedAt"/>
+        <result column="is_deleted" jdbcType="TINYINT" property="deleted"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, key_result_id, comment_user_id,comment_user_name,`comment`, created_at, updated_at, deleted_at,
+        is_deleted
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from key_result_comment
+        where id = #{id,jdbcType=BIGINT} and is_deleted = 0
+    </select>
+    <select id="listKeyResultCommentsByKeyResultId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from key_result_comment
+        where key_result_id = #{keyResultId,jdbcType=BIGINT} and is_deleted = 0
+        order by created_at desc
+    </select>
+    <update id="deleteByKeyResultId" parameterType="java.lang.Long">
+        update key_result_comment
+        set is_deleted = 1, deleted_at = now()
+        where key_result_id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        update key_result_comment
+        set is_deleted = 1, deleted_at = now()
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <insert id="insert" parameterType="com.coreteam.okr.entity.KeyResultComment" useGeneratedKeys="true"
+            keyProperty="id" keyColumn="id">
+        insert into key_result_comment (id, key_result_id, comment_user_id, comment_user_name,
+        `comment`, created_at, updated_at, deleted_at, is_deleted
+        )
+        values (#{id,jdbcType=BIGINT}, #{keyResultId,jdbcType=BIGINT}, #{commentUserId,jdbcType=BIGINT},
+        #{commentUserName,jdbcType=VARCHAR}, #{comment,jdbcType=VARCHAR}, #{createdAt,jdbcType=TIMESTAMP}, #{updatedAt,jdbcType=TIMESTAMP},
+        #{deletedAt,jdbcType=TIMESTAMP}, #{deleted,jdbcType=TINYINT}
+        )
+    </insert>
+    <insert id="insertSelective" parameterType="com.coreteam.okr.entity.KeyResultComment" useGeneratedKeys="true"
+            keyProperty="id" keyColumn="id">
+        insert into key_result_comment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="keyResultId != null">
+                key_result_id,
+            </if>
+            <if test="commentUserId != null">
+                comment_user_id,
+            </if>
+            <if test="commentUserName != null">
+                comment_user_name,
+            </if>
+            <if test="comment != null">
+                `comment`,
+            </if>
+            <if test="createdAt != null">
+                created_at,
+            </if>
+            <if test="updatedAt != null">
+                updated_at,
+            </if>
+            <if test="deletedAt != null">
+                deleted_at,
+            </if>
+            <if test="deleted != null">
+                is_deleted,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="keyResultId != null">
+                #{keyResultId,jdbcType=BIGINT},
+            </if>
+            <if test="commentUserId != null">
+                #{commentUserId,jdbcType=BIGINT},
+            </if>
+            <if test="commentUserName != null">
+                #{commentUserName,jdbcType=VARCHAR},
+            </if>
+            <if test="comment != null">
+                #{comment,jdbcType=VARCHAR},
+            </if>
+            <if test="createdAt != null">
+                #{createdAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatedAt != null">
+                #{updatedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deletedAt != null">
+                #{deletedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deleted != null">
+                #{deleted,jdbcType=TINYINT},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.coreteam.okr.entity.KeyResultComment">
+        update key_result_comment
+        <set>
+            <if test="keyResultId != null">
+                key_result_id = #{keyResultId,jdbcType=BIGINT},
+            </if>
+            <if test="commentUserId != null">
+                comment_user_id = #{commentUserId,jdbcType=BIGINT},
+            </if>
+            <if test="commentUserName != null">
+                comment_user_name = #{commentUserName,jdbcType=VARCHAR},
+            </if>
+            <if test="comment != null">
+                `comment` = #{comment,jdbcType=VARCHAR},
+            </if>
+            <if test="createdAt != null">
+                created_at = #{createdAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatedAt != null">
+                updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deletedAt != null">
+                deleted_at = #{deletedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deleted != null">
+                is_deleted = #{deleted,jdbcType=TINYINT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.coreteam.okr.entity.KeyResultComment">
+        update key_result_comment
+        set key_result_id = #{keyResultId,jdbcType=BIGINT},
+        comment_user_id = #{commentUserId,jdbcType=BIGINT},
+        comment_user_name=#{commentUserName,jdbcType=VARCHAR},
+        `comment` = #{comment,jdbcType=VARCHAR},
+        created_at = #{createdAt,jdbcType=TIMESTAMP},
+        updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+        deleted_at = #{deletedAt,jdbcType=TIMESTAMP},
+        is_deleted = #{deleted,jdbcType=TINYINT}
+        where id = #{id,jdbcType=DECIMAL}
+    </update>
+</mapper>

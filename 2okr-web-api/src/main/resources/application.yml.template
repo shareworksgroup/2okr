@@ -1,0 +1,97 @@
+server:
+  servlet:
+    context-path: /okrapi
+  port: XXXX
+spring:
+  profiles:
+    active: dev
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driverClassName: com.mysql.cj.jdbc.Driver
+    druid:
+      url: XXXXXXXXXXXXXXX
+      username: XXXXXXXXXXXXXX
+      password: XXXXXXXXXXXXXX
+  rabbitmq:
+      host: XXXXXXXXXXXXXX
+      port: XXXXXXXXXXXXXX
+      username: XXXXXXXXXXXXXX
+      password: XXXXXXXXXXXXXX
+      publisher-confirms: true
+      publisher-returns: true
+
+#mybatis
+mybatis:
+  mapperLocations: classpath:/mapper/**/*.xml   #把xml文件放在resource下的mapper中
+  typeAliasesPackage: com.coreteam.okr.entity  #实体扫描，多个package用逗号或者分号分隔
+#pagehelper 分页插件配置
+pagehelper:
+  reasonable: true
+  support-methods-arguments: true
+  params: countSql
+  helper-dialect: mysql
+#sso 地址
+sso:
+  server-path: http://XXXXXXXXXXXXXX/sso-server
+  regist-path: ${sso.server-path}/register
+security:
+  oauth2:
+    resource:
+      jwt:
+        key-uri: ${sso.server-path}/oauth/token_key
+      id: XXXXXX
+#user service 地址
+user-service:
+  path: http://XXXXXXXXXXXXXXX/user-service
+
+# okr-service:
+okr-service:
+  path: http://XXXXXXXXXXXXXX/app
+  invite-accept-path: http://XXXXXXXXXXXXXX/app/success
+  login: http://XXXXXXXXXXXXXX/app/profile
+  weekly_report_path: http://XXXXXXXXXXXXXX/app/report_view
+
+# msg service 地址
+msg-service:
+  path: http://XXXXXXXXXXXXXX/msg-server
+
+feign:
+  client:
+    config:
+      remote-service:
+        connectTimeout: 1000
+        readTimeout: 12000
+
+ignore:
+  urls:
+    - /webjars/**
+    - /resources/**
+    - /swagger-ui.html
+    - /swagger-resources/**
+    - /v2/api-docs
+    - /actuator/health
+    - /members/invite/accept
+    - /weeklyplans/report/view/objective_type
+    - /weeklyplans/report/view/category_type
+    - /weeklyplans/report/view/user_type
+    - /users/*/social/wechat/binde/callback
+    - index.html
+
+alipay:
+  notifyUrl: XXXXXXXXXXXXXX
+  returnUrl: XXXXXXXXXXXXXX
+  appId: XXXXXXXXXXXXXX
+  alipayPrivateKey: XXXXXXXXXXXXXX
+  alipayPublicKey: XXXXXXXXXXXXXX
+  requestTimeOut: 1000
+  useSandbox: true
+
+wechat:
+  mpAppId: XXXXXXXXXXXXXX
+  mpAppSecret: XXXXXXXXXXXXXX
+  returnUrl: XXXXXXXXXXXXXX
+
+organization:
+  subscription:
+    check: true
+    expired: 60000

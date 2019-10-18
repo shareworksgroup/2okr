@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.coreteam.okr.dao.TeamDAO">
+    <resultMap id="BaseResultMap" type="com.coreteam.okr.entity.Team">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="leader_id" jdbcType="BIGINT" property="leaderId"/>
+        <result column="leader_name" jdbcType="VARCHAR" property="leaderName"/>
+        <result column="created_user" jdbcType="BIGINT" property="createdUser"/>
+        <result column="created_name" jdbcType="VARCHAR" property="createdName"/>
+        <result column="created_at" jdbcType="TIMESTAMP" property="createdAt"/>
+        <result column="organization_id" jdbcType="INTEGER" property="organizationId"/>
+        <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt"/>
+        <result column="deleted_at" jdbcType="TIMESTAMP" property="deletedAt"/>
+        <result column="is_deleted" jdbcType="TINYINT" property="deleted"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, `name`, leader_id, leader_name,created_user, created_name,created_at, organization_id, updated_at, deleted_at, is_deleted
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from team
+        where id = #{id,jdbcType=BIGINT} and is_deleted = 0
+    </select>
+    <select id="listTeamsStatisticsByOrganization" parameterType="java.lang.Long"
+            resultType="com.coreteam.okr.dto.team.TeamStatisticsDTO">
+        select
+        id,`name`,leader_id as leaderId,leader_name as leaderName,organization_id as organizationId,
+        (select count(*) from member t2 where organization_id = #{organizationId,jdbcType=BIGINT} and status='NORMAL' and type='TEAM'
+        and t.id=t2.team_id
+        and is_deleted = 0) as memberNum,
+        (select count(id) from objective o where o.organization_id=#{organizationId,jdbcType=BIGINT} and o.is_deleted=0
+        and ( YEAR(o.period_start_time)=YEAR(NOW()) or YEAR(o.period_end_time)=YEAR(NOW()))
+        and o.team_id = t.id
+        and o.level='TEAM'
+        ) as okrNum
+        from team t
+        where organization_id = #{organizationId,jdbcType=BIGINT} and is_deleted = 0
+    </select>
+
+    <select id="listTeamsByUserId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from team
+        where id in (select team_id from member where type='TEAM' and user_id = #{userId,jdbcType=BIGINT} and status='NORMAL')
+        and organization_id = #{organizationId,jdbcType=BIGINT}
+        and is_deleted = 0
+    </select>
+
+    <update id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        update team
+        set is_deleted = 1, deleted_at = now()
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <insert id="insert" parameterType="com.coreteam.okr.entity.Team" useGeneratedKeys="true" keyColumn="id"
+            keyProperty="id">
+        insert into team (id, `name`, leader_id, leader_name,created_user,created_name,
+        created_at, organization_id, updated_at,
+        deleted_at, is_deleted)
+        values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{leaderId,jdbcType=BIGINT},
+        #{leaderName,jdbcType=VARCHAR},#{createdUser,jdbcType=BIGINT}, #{createdName,jdbcType=VARCHAR},
+        #{createdAt,jdbcType=TIMESTAMP}, #{organizationId,jdbcType=INTEGER}, #{updatedAt,jdbcType=TIMESTAMP},
+        #{deletedAt,jdbcType=TIMESTAMP}, #{deleted,jdbcType=TINYINT})
+    </insert>
+    <insert id="insertSelective" parameterType="com.coreteam.okr.entity.Team" useGeneratedKeys="true" keyColumn="id"
+            keyProperty="id">
+        insert into team
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="name != null">
+                `name`,
+            </if>
+            <if test="leaderId != null">
+                leader_id,
+            </if>
+            <if test="leaderName != null">
+                leader_name,
+            </if>
+            <if test="createdUser != null">
+                created_user,
+            </if>
+            <if test="createdName != null">
+                created_name,
+            </if>
+            <if test="createdAt != null">
+                created_at,
+            </if>
+            <if test="organizationId != null">
+                organization_id,
+            </if>
+            <if test="updatedAt != null">
+                updated_at,
+            </if>
+            <if test="deletedAt != null">
+                deleted_at,
+            </if>
+            <if test="deleted != null">
+                is_deleted,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="leaderId != null">
+                #{leaderId,jdbcType=BIGINT},
+            </if>
+            <if test="leaderName != null">
+                #{leaderName,jdbcType=VARCHAR},
+            </if>
+            <if test="createdUser != null">
+                #{createdUser,jdbcType=BIGINT},
+            </if>
+            <if test="createdName != null">
+                #{createdName,jdbcType=VARCHAR},
+            </if>
+            <if test="createdAt != null">
+                #{createdAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="organizationId != null">
+                #{organizationId,jdbcType=INTEGER},
+            </if>
+            <if test="updatedAt != null">
+                #{updatedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deletedAt != null">
+                #{deletedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="isDeleted != null">
+                #{deleted,jdbcType=TINYINT},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.coreteam.okr.entity.Team">
+        update team
+        <set>
+            <if test="name != null">
+                `name` = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="leaderId != null">
+                leader_id = #{leaderId,jdbcType=BIGINT},
+            </if>
+            <if test="leaderName != null">
+                leader_name = #{leaderName,jdbcType=VARCHAR},
+            </if>
+            <if test="createdAt != null">
+                created_at = #{createdAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="organizationId != null">
+                organization_id = #{organizationId,jdbcType=INTEGER},
+            </if>
+            <if test="updatedAt != null">
+                updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deletedAt != null">
+                deleted_at = #{deletedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deleted != null">
+                is_deleted = #{deleted,jdbcType=TINYINT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.coreteam.okr.entity.Team">
+        update team
+        set `name` = #{name,jdbcType=VARCHAR},
+        leader_id = #{leaderId,jdbcType=BIGINT},
+        leader_name=#{leaderName,jdbcType=VARCHAR},
+        created_at = #{createdAt,jdbcType=TIMESTAMP},
+        organization_id = #{organizationId,jdbcType=INTEGER},
+        updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+        deleted_at = #{deletedAt,jdbcType=TIMESTAMP},
+        is_deleted = #{deleted,jdbcType=TINYINT}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+</mapper>

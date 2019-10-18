@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.coreteam.okr.dao.BussinessLogDAO">
+    <resultMap id="BaseResultMap" type="com.coreteam.okr.entity.BussinessLog">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="operate_type" jdbcType="VARCHAR" property="operateType"/>
+        <result column="operator_id" jdbcType="BIGINT" property="operatorId"/>
+        <result column="desc" jdbcType="VARCHAR" property="desc"/>
+        <result column="created_at" jdbcType="TIMESTAMP" property="createdAt"/>
+        <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt"/>
+        <result column="deleted_at" jdbcType="TIMESTAMP" property="deletedAt"/>
+        <result column="is_deleted" jdbcType="TINYINT" property="deleted"/>
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="ref_entity_id" jdbcType="BIGINT" property="refEntityId"/>
+        <result column="entity_type" jdbcType="VARCHAR" property="entityType"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, operate_type, operator_id, `desc`, created_at, updated_at, deleted_at, is_deleted, ref_entity_id,
+        entity_type,
+        organization_id
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from bussiness_log
+        where id = #{id,jdbcType=BIGINT} and is_deleted = 0
+    </select>
+
+    <select id="pageListLogs" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from bussiness_log
+        where entity_type = #{entityType} and ref_entity_id = #{refEntityId} and is_deleted = 0
+        order by created_at desc
+    </select>
+
+    <update id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        update bussiness_log
+        set is_deleted = 1, deleted_at = now()
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <insert id="insert" parameterType="com.coreteam.okr.entity.BussinessLog">
+        insert into bussiness_log (operate_type, operator_id,
+        `desc`, created_at, updated_at,
+        deleted_at, is_deleted, organization_id, ref_entity_id, entity_type
+        )
+        values (#{operateType,jdbcType=VARCHAR}, #{operatorId,jdbcType=BIGINT},
+        #{desc,jdbcType=VARCHAR}, #{createdAt,jdbcType=TIMESTAMP}, #{updatedAt,jdbcType=TIMESTAMP},
+        #{deletedAt,jdbcType=TIMESTAMP}, #{deleted,jdbcType=TINYINT}, #{organizationId,jdbcType=BIGINT},
+        #{refEntityId,jdbcType=BIGINT}, #{entityType,jdbcType=VARCHAR}
+        )
+    </insert>
+    <insert id="insertSelective" parameterType="com.coreteam.okr.entity.BussinessLog" useGeneratedKeys="true" keyColumn="id"
+            keyProperty="id">
+        insert into bussiness_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="operateType != null">
+                operate_type,
+            </if>
+            <if test="operatorId != null">
+                operator_id,
+            </if>
+            <if test="desc != null">
+                `desc`,
+            </if>
+            <if test="createdAt != null">
+                created_at,
+            </if>
+            <if test="updatedAt != null">
+                updated_at,
+            </if>
+            <if test="deletedAt != null">
+                deleted_at,
+            </if>
+            <if test="deleted != null">
+                is_deleted,
+            </if>
+            <if test="organizationId != null">
+                organization_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="operateType != null">
+                #{operateType,jdbcType=VARCHAR},
+            </if>
+            <if test="operatorId != null">
+                #{operatorId,jdbcType=BIGINT},
+            </if>
+            <if test="desc != null">
+                #{desc,jdbcType=VARCHAR},
+            </if>
+            <if test="createdAt != null">
+                #{createdAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatedAt != null">
+                #{updatedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deletedAt != null">
+                #{deletedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deleted != null">
+                #{deleted,jdbcType=TINYINT},
+            </if>
+            <if test="organizationId != null">
+                #{organizationId,jdbcType=BIGINT},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.coreteam.okr.entity.BussinessLog">
+        update bussiness_log
+        <set>
+            <if test="operateType != null">
+                operate_type = #{operateType,jdbcType=VARCHAR},
+            </if>
+            <if test="operatorId != null">
+                operator_id = #{operatorId,jdbcType=BIGINT},
+            </if>
+            <if test="desc != null">
+                `desc` = #{desc,jdbcType=VARCHAR},
+            </if>
+            <if test="createdAt != null">
+                created_at = #{createdAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatedAt != null">
+                updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deletedAt != null">
+                deleted_at = #{deletedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deleted != null">
+                is_deleted = #{deleted,jdbcType=TINYINT},
+            </if>
+            <if test="organizationId != null">
+                organization_id = #{organizationId,jdbcType=BIGINT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.coreteam.okr.entity.BussinessLog">
+        update bussiness_log
+        set operate_type = #{operateType,jdbcType=VARCHAR},
+        operator_id = #{operatorId,jdbcType=BIGINT},
+        `desc` = #{desc,jdbcType=VARCHAR},
+        created_at = #{createdAt,jdbcType=TIMESTAMP},
+        updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+        deleted_at = #{deletedAt,jdbcType=TIMESTAMP},
+        is_deleted = #{deleted,jdbcType=TINYINT},
+        organization_id = #{organizationId,jdbcType=BIGINT}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+</mapper>

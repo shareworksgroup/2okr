@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.coreteam.okr.dao.WeeklyPlanItemDAO">
+    <resultMap id="BaseResultMap" type="com.coreteam.okr.entity.WeeklyPlanItem">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="weekly_plan_id" jdbcType="BIGINT" property="weeklyPlanId"/>
+        <result column="plan_id" jdbcType="BIGINT" property="planId"/>
+        <result column="week" jdbcType="INTEGER" property="week"/>
+        <result column="categorie_id" jdbcType="BIGINT" property="categorieId"/>
+        <result column="color" jdbcType="VARCHAR" property="color"/>
+        <result column="carried_over_age" jdbcType="INTEGER" property="carriedOverAge"/>
+        <result column="owner_id" jdbcType="BIGINT" property="ownerId"/>
+        <result column="owner_name" jdbcType="VARCHAR" property="ownerName"/>
+        <result column="created_at" jdbcType="TIMESTAMP" property="createdAt"/>
+        <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt"/>
+        <result column="deleted_at" jdbcType="TIMESTAMP" property="deletedAt"/>
+        <result column="is_deleted" jdbcType="TINYINT" property="deleted"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id,weekly_plan_id,plan_id, week, `categorie_id`, color, carried_over_age, owner_id, owner_name, created_at,
+        updated_at, deleted_at, is_deleted
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from weekly_plan_item
+        where id = #{id,jdbcType=BIGINT}
+        and is_deleted=0
+    </select>
+
+    <select id="listUndoneWeeklyPlanItemByUser" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from weekly_plan_item
+        where weekly_plan_id in
+        (select id from weekly_plan
+          where owner_id = #{userId,jdbcType=BIGINT}
+           and organization_id=#{organizationId,jdbcType=BIGINT}
+           and template_id=#{templateId,jdbcType=BIGINT}
+           and week = #{week,jdbcType=INTEGER}
+        )
+        and  categorie_id in
+        <foreach collection="needCarryCategorid" item="item" index="index"
+                 open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+        and is_deleted=0
+    </select>
+
+
+    <select id="listUserWeeklyPlanItemByWeeklyPlanId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from weekly_plan_item
+        where weekly_plan_id = #{weeklyPlanId,jdbcType=BIGINT}
+        and is_deleted=0
+    </select>
+
+    <select id="listWeeklyPlanItem" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from weekly_plan_item
+        where week = #{week,jdbcType=INTEGER}
+        and is_deleted=0
+    </select>
+
+
+    <update id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        update weekly_plan_item
+        set is_deleted = 1, deleted_at = now()
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+
+    <insert id="insert" parameterType="com.coreteam.okr.entity.WeeklyPlanItem" useGeneratedKeys="true"
+            keyColumn="id"
+            keyProperty="id">
+        insert into weekly_plan_item (id, weekly_plan_id,plan_id, week,
+        `categorie_id`, color, carried_over_age,
+        owner_id, owner_name, created_at,
+        updated_at, deleted_at, is_deleted
+        )
+        values (#{id,jdbcType=BIGINT},#{weeklyPlanId,jdbcType=BIGINT}, #{planId,jdbcType=BIGINT},
+        #{week,jdbcType=INTEGER},
+        #{categorieId,jdbcType=BIGINT}, #{color,jdbcType=VARCHAR}, #{carriedOverAge,jdbcType=INTEGER},
+        #{ownerId,jdbcType=BIGINT}, #{ownerName,jdbcType=VARCHAR}, #{createdAt,jdbcType=TIMESTAMP},
+        #{updatedAt,jdbcType=TIMESTAMP}, #{deletedAt,jdbcType=TIMESTAMP}, #{deleted,jdbcType=TINYINT}
+        )
+    </insert>
+
+    <insert id="insertSelective" parameterType="com.coreteam.okr.entity.WeeklyPlanItem" useGeneratedKeys="true"
+            keyColumn="id"
+            keyProperty="id">
+        insert into weekly_plan_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="weeklyPlanId != null">
+                weekly_plan_id,
+            </if>
+            <if test="planId != null">
+                plan_id,
+            </if>
+            <if test="week != null">
+                week,
+            </if>
+            <if test="categorieId != null">
+                `categorie_id`,
+            </if>
+            <if test="color != null">
+                color,
+            </if>
+            <if test="carriedOverAge != null">
+                carried_over_age,
+            </if>
+            <if test="ownerId != null">
+                owner_id,
+            </if>
+            <if test="ownerName != null">
+                owner_name,
+            </if>
+            <if test="createdAt != null">
+                created_at,
+            </if>
+            <if test="updatedAt != null">
+                updated_at,
+            </if>
+            <if test="deletedAt != null">
+                deleted_at,
+            </if>
+            <if test="deleted != null">
+                is_deleted,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="weeklyPlanId != null">
+                #{weeklyPlanId,jdbcType=BIGINT},
+            </if>
+            <if test="planId != null">
+                #{planId,jdbcType=BIGINT},
+            </if>
+            <if test="week != null">
+                #{week,jdbcType=INTEGER},
+            </if>
+            <if test="categorieId != null">
+                #{categorieId,jdbcType=VARCHAR},
+            </if>
+            <if test="color != null">
+                #{color,jdbcType=VARCHAR},
+            </if>
+            <if test="carriedOverAge != null">
+                #{carriedOverAge,jdbcType=INTEGER},
+            </if>
+            <if test="ownerId != null">
+                #{ownerId,jdbcType=BIGINT},
+            </if>
+            <if test="ownerName != null">
+                #{ownerName,jdbcType=VARCHAR},
+            </if>
+            <if test="createdAt != null">
+                #{createdAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatedAt != null">
+                #{updatedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deletedAt != null">
+                #{deletedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deleted != null">
+                #{deleted,jdbcType=TINYINT},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.coreteam.okr.entity.WeeklyPlanItem">
+        update weekly_plan_item
+        <set>
+            <if test="weeklyPlanId != null">
+                weekly_plan_id = #{weeklyPlanId,jdbcType=BIGINT},
+            </if>
+            <if test="planId != null">
+                plan_id = #{planId,jdbcType=BIGINT},
+            </if>
+            <if test="week != null">
+                week = #{week,jdbcType=INTEGER},
+            </if>
+            <if test="categorieId != null">
+                `categorie_id` = #{categorieId,jdbcType=VARCHAR},
+            </if>
+            <if test="color != null">
+                color = #{color,jdbcType=VARCHAR},
+            </if>
+            <if test="carriedOverAge != null">
+                carried_over_age = #{carriedOverAge,jdbcType=INTEGER},
+            </if>
+            <if test="ownerId != null">
+                owner_id = #{ownerId,jdbcType=BIGINT},
+            </if>
+            <if test="ownerName != null">
+                owner_name = #{ownerName,jdbcType=VARCHAR},
+            </if>
+            <if test="createdAt != null">
+                created_at = #{createdAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatedAt != null">
+                updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deletedAt != null">
+                deleted_at = #{deletedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deleted != null">
+                is_deleted = #{deleted,jdbcType=TINYINT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.coreteam.okr.entity.WeeklyPlanItem">
+        update weekly_plan_item
+        set
+        weekly_plan_id =#{weeklyPlanId,jdbcType=BIGINT},
+        plan_id = #{planId,jdbcType=BIGINT},
+        week = #{week,jdbcType=INTEGER},
+        `categorie_id` = #{categorieId,jdbcType=VARCHAR},
+        color = #{color,jdbcType=VARCHAR},
+        carried_over_age = #{carriedOverAge,jdbcType=INTEGER},
+        owner_id = #{ownerId,jdbcType=BIGINT},
+        owner_name = #{ownerName,jdbcType=VARCHAR},
+        created_at = #{createdAt,jdbcType=TIMESTAMP},
+        updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+        deleted_at = #{deletedAt,jdbcType=TIMESTAMP},
+        is_deleted = #{deleted,jdbcType=TINYINT}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateOwnerName">
+        update weekly_plan_item
+        set owner_name = #{userName,jdbcType=VARCHAR}
+        where owner_id = #{userId,jdbcType=BIGINT}
+    </update>
+</mapper>

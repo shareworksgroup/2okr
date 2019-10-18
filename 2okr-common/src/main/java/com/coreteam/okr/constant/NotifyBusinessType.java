@@ -1,0 +1,14 @@
+package com.coreteam.okr.constant;
+
+/**
+ * @ClassName: NotifyBusinessType
+ * @Description TODO
+ * @Author sean.deng
+ * @Date 2019/06/12 11:25
+ * @Version 1.0.0
+ */
+public enum NotifyBusinessType {
+    EMAIL_REGISTER,EMAIL_JOIN,EMAIL_PERSONAL_WEEKLY_PLAN_REPORT,SYSTEM_OBJECTIVE_UPDATE,SYSTEM_OBJECTIVE_OFF_TRACE,SYSTEM_KEY_RESULT_UPDATE,
+    EMAIL_ORG_REGULAR_REPORT,SYSTEM_KEY_RESULT_HAS_NEW_COMMENT,SYSTEM_WEEKLY_PLAN_HAS_NEW_COMMENT
+    ;
+}

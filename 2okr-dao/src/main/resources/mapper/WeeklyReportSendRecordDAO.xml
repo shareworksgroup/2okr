@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.coreteam.okr.dao.WeeklyReportSendRecordDAO">
+    <resultMap id="BaseResultMap" type="com.coreteam.okr.entity.WeeklyReportSendRecord">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="week" jdbcType="INTEGER" property="week"/>
+        <result column="receiver_id" jdbcType="BIGINT" property="receiverId"/>
+        <result column="sender_id" jdbcType="BIGINT" property="senderId"/>
+        <result column="weekly_plan_id" jdbcType="BIGINT" property="weeklyPlanId"/>
+        <result column="created_at" jdbcType="TIMESTAMP" property="createdAt"/>
+        <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt"/>
+        <result column="deleted_at" jdbcType="TIMESTAMP" property="deletedAt"/>
+        <result column="is_deleted" jdbcType="TINYINT" property="deleted"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, week, receiver_id, sender_id, weekly_plan_id, created_at, updated_at, deleted_at,
+        is_deleted
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from weekly_report_send_record
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <update id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        update weekly_report_send_record
+        set is_deleted = 1, deleted_at = now()
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <insert id="insert" parameterType="com.coreteam.okr.entity.WeeklyReportSendRecord" useGeneratedKeys="true"
+            keyColumn="id"
+            keyProperty="id">
+        insert into weekly_report_send_record (id, week, receiver_id,
+        sender_id, weekly_plan_id, created_at,
+        updated_at, deleted_at, is_deleted
+        )
+        values (#{id,jdbcType=BIGINT}, #{week,jdbcType=INTEGER}, #{receiverId,jdbcType=BIGINT},
+        #{senderId,jdbcType=BIGINT}, #{weeklyPlanId,jdbcType=BIGINT}, #{createdAt,jdbcType=TIMESTAMP},
+        #{updatedAt,jdbcType=TIMESTAMP}, #{deletedAt,jdbcType=TIMESTAMP}, #{deleted,jdbcType=TINYINT}
+        )
+    </insert>
+    <insert id="insertSelective" parameterType="com.coreteam.okr.entity.WeeklyReportSendRecord" useGeneratedKeys="true"
+            keyColumn="id"
+            keyProperty="id">
+        insert into weekly_report_send_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="week != null">
+                week,
+            </if>
+            <if test="receiverId != null">
+                receiver_id,
+            </if>
+            <if test="senderId != null">
+                sender_id,
+            </if>
+            <if test="weeklyPlanId != null">
+                weekly_plan_id,
+            </if>
+            <if test="createdAt != null">
+                created_at,
+            </if>
+            <if test="updatedAt != null">
+                updated_at,
+            </if>
+            <if test="deletedAt != null">
+                deleted_at,
+            </if>
+            <if test="deleted != null">
+                is_deleted,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="week != null">
+                #{week,jdbcType=INTEGER},
+            </if>
+            <if test="receiverId != null">
+                #{receiverId,jdbcType=BIGINT},
+            </if>
+            <if test="senderId != null">
+                #{senderId,jdbcType=BIGINT},
+            </if>
+            <if test="weeklyPlanId != null">
+                #{weeklyPlanId,jdbcType=BIGINT},
+            </if>
+            <if test="createdAt != null">
+                #{createdAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatedAt != null">
+                #{updatedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deletedAt != null">
+                #{deletedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deleted != null">
+                #{deleted,jdbcType=TINYINT},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.coreteam.okr.entity.WeeklyReportSendRecord">
+        update weekly_report_send_record
+        <set>
+            <if test="week != null">
+                week = #{week,jdbcType=INTEGER},
+            </if>
+            <if test="receiverId != null">
+                receiver_id = #{receiverId,jdbcType=BIGINT},
+            </if>
+            <if test="senderId != null">
+                sender_id = #{senderId,jdbcType=BIGINT},
+            </if>
+            <if test="weeklyPlanId != null">
+                weekly_plan_id = #{weeklyPlanId,jdbcType=BIGINT},
+            </if>
+            <if test="createdAt != null">
+                created_at = #{createdAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatedAt != null">
+                updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deletedAt != null">
+                deleted_at = #{deletedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deleted != null">
+                is_deleted = #{deleted,jdbcType=TINYINT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.coreteam.okr.entity.WeeklyReportSendRecord">
+        update weekly_report_send_record
+        set week = #{week,jdbcType=INTEGER},
+        receiver_id = #{receiverId,jdbcType=BIGINT},
+        sender_id = #{senderId,jdbcType=BIGINT},
+        weekly_plan_id = #{weeklyPlanId,jdbcType=BIGINT},
+        created_at = #{createdAt,jdbcType=TIMESTAMP},
+        updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+        deleted_at = #{deletedAt,jdbcType=TIMESTAMP},
+        is_deleted = #{deleted,jdbcType=TINYINT}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="deleteBySenderReciverAndWeek">
+        update weekly_report_send_record
+        set is_deleted = 1, deleted_at = now()
+        where sender_id = #{userId,jdbcType=BIGINT}
+        and reciver_id = #{reciverId,jdbcType=BIGINT}
+        and week = #{week,jdbcType=INTEGER}
+    </update>
+    <update id="clearSendRecordByUser">
+        update weekly_report_send_record
+        set is_deleted = 1, deleted_at = now()
+        where sender_id = #{userId,jdbcType=BIGINT}
+        and weekly_plan_id = #{weeklyPlanId,jdbcType=BIGINT}
+        and week = #{week,jdbcType=INTEGER}
+    </update>
+</mapper>

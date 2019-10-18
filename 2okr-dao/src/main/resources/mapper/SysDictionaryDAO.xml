@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.coreteam.okr.dao.SysDictionaryDAO">
+    <resultMap id="BaseResultMap" type="com.coreteam.okr.entity.SysDictionary">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="dict_type" jdbcType="VARCHAR" property="dictType"/>
+        <result column="dict_name" jdbcType="VARCHAR" property="dictName"/>
+        <result column="dict_value" jdbcType="VARCHAR" property="dictValue"/>
+        <result column="sort" jdbcType="SMALLINT" property="sort"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="created_at" jdbcType="TIMESTAMP" property="createdAt"/>
+        <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt"/>
+        <result column="deleted_at" jdbcType="TIMESTAMP" property="deletedAt"/>
+        <result column="is_deleted" jdbcType="TINYINT" property="deleted"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, dict_type, dict_name, dict_value, sort, remark, created_at, updated_at, deleted_at,
+        is_deleted
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_dictionary
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="listDictByType" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_dictionary
+        where dict_type = #{type,jdbcType=VARCHAR}
+        and is_deleted=0
+        order by sort
+    </select>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        select dict_type, dict_name, dict_value, remark from sys_dictionary where is_deleted = 0 order by dict_type,
+        sort;
+    </select>
+    <update id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        update sys_dictionary
+        set is_deleted = 1, deleted_at = now()
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <delete id="deleteByDictionaryType" parameterType="java.lang.String">
+        delete from sys_dictionary
+        where dict_type like CONCAT(#{type},'%')
+    </delete>
+    <insert id="insert" parameterType="com.coreteam.okr.entity.SysDictionary" useGeneratedKeys="true" keyColumn="id"
+            keyProperty="id">
+        insert into sys_dictionary (id, dict_type, dict_name,
+        dict_value, sort, remark,
+        created_at, updated_at, deleted_at,
+        is_deleted)
+        values (#{id,jdbcType=BIGINT}, #{dictType,jdbcType=VARCHAR}, #{dictName,jdbcType=VARCHAR},
+        #{dictValue,jdbcType=VARCHAR}, #{sort,jdbcType=SMALLINT}, #{remark,jdbcType=VARCHAR},
+        #{createdAt,jdbcType=TIMESTAMP}, #{updatedAt,jdbcType=TIMESTAMP}, #{deletedAt,jdbcType=TIMESTAMP},
+        #{deleted,jdbcType=TINYINT})
+    </insert>
+    <insert id="insertSelective" parameterType="com.coreteam.okr.entity.SysDictionary" useGeneratedKeys="true" keyColumn="id"
+            keyProperty="id">
+        insert into sys_dictionary
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="dictType != null">
+                dict_type,
+            </if>
+            <if test="dictName != null">
+                dict_name,
+            </if>
+            <if test="dictValue != null">
+                dict_value,
+            </if>
+            <if test="sort != null">
+                sort,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+            <if test="createdAt != null">
+                created_at,
+            </if>
+            <if test="updatedAt != null">
+                updated_at,
+            </if>
+            <if test="deletedAt != null">
+                deleted_at,
+            </if>
+            <if test="deleted != null">
+                is_deleted,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="dictType != null">
+                #{dictType,jdbcType=VARCHAR},
+            </if>
+            <if test="dictName != null">
+                #{dictName,jdbcType=VARCHAR},
+            </if>
+            <if test="dictValue != null">
+                #{dictValue,jdbcType=VARCHAR},
+            </if>
+            <if test="sort != null">
+                #{sort,jdbcType=SMALLINT},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="createdAt != null">
+                #{createdAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatedAt != null">
+                #{updatedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deletedAt != null">
+                #{deletedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deleted != null">
+                #{deleted,jdbcType=TINYINT},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.coreteam.okr.entity.SysDictionary">
+        update sys_dictionary
+        <set>
+            <if test="dictType != null">
+                dict_type = #{dictType,jdbcType=VARCHAR},
+            </if>
+            <if test="dictName != null">
+                dict_name = #{dictName,jdbcType=VARCHAR},
+            </if>
+            <if test="dictValue != null">
+                dict_value = #{dictValue,jdbcType=VARCHAR},
+            </if>
+            <if test="sort != null">
+                sort = #{sort,jdbcType=SMALLINT},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="createdAt != null">
+                created_at = #{createdAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatedAt != null">
+                updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deletedAt != null">
+                deleted_at = #{deletedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deleted != null">
+                is_deleted = #{deleted,jdbcType=TINYINT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.coreteam.okr.entity.SysDictionary">
+        update sys_dictionary
+        set dict_type = #{dictType,jdbcType=VARCHAR},
+        dict_name = #{dictName,jdbcType=VARCHAR},
+        dict_value = #{dictValue,jdbcType=VARCHAR},
+        sort = #{sort,jdbcType=SMALLINT},
+        remark = #{remark,jdbcType=VARCHAR},
+        created_at = #{createdAt,jdbcType=TIMESTAMP},
+        updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+        deleted_at = #{deletedAt,jdbcType=TIMESTAMP},
+        is_deleted = #{deleted,jdbcType=TINYINT}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+</mapper>

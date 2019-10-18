@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.coreteam.okr.dao.OrderDAO">
+    <resultMap id="BaseResultMap" type="com.coreteam.okr.entity.Order">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="organization_id" jdbcType="BIGINT" property="organizationId"/>
+        <result column="subscribe_id" jdbcType="BIGINT" property="subscribeId"/>
+        <result column="order_no" jdbcType="BIGINT" property="orderNo"/>
+        <result column="order_amount" jdbcType="DECIMAL" property="orderAmount"/>
+        <result column="order_status" jdbcType="VARCHAR" property="orderStatus"/>
+        <result column="order_date" jdbcType="TIMESTAMP" property="orderDate"/>
+        <result column="payment_at" jdbcType="TIMESTAMP" property="paymentAt"/>
+        <result column="created_user" jdbcType="BIGINT" property="createdUser"/>
+        <result column="created_name" jdbcType="VARCHAR" property="createdName"/>
+        <result column="created_at" jdbcType="TIMESTAMP" property="createdAt"/>
+        <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt"/>
+        <result column="deleted_at" jdbcType="TIMESTAMP" property="deletedAt"/>
+        <result column="is_deleted" jdbcType="TINYINT" property="deleted"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, organization_id, subscribe_id, order_no, order_amount, order_status, order_date,
+        payment_at, created_user, created_name, created_at, updated_at, deleted_at, is_deleted
+    </sql>
+
+    <select id="getOrderBySubscribeId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from `order`
+        where subscribe_id = #{id,jdbcType=BIGINT}
+        and is_deleted=0
+    </select>
+
+    <select id="getOrderByOrderNo" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from `order`
+        where order_no = #{id,jdbcType=BIGINT}
+        and is_deleted=0
+    </select>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from `order`
+        where id = #{id,jdbcType=BIGINT}
+        and is_deleted=0
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from `order`
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="com.coreteam.okr.entity.Order" useGeneratedKeys="true" keyColumn="id"
+            keyProperty="id">
+        insert into `order` (id, organization_id, subscribe_id,
+        order_no, order_amount, order_status,
+        order_date, payment_at, created_user,
+        created_name, created_at, updated_at,
+        deleted_at, is_deleted)
+        values (#{id,jdbcType=BIGINT}, #{organizationId,jdbcType=BIGINT}, #{subscribeId,jdbcType=BIGINT},
+        #{orderNo,jdbcType=BIGINT}, #{orderAmount,jdbcType=DECIMAL}, #{orderStatus,jdbcType=VARCHAR},
+        #{orderDate,jdbcType=TIMESTAMP}, #{paymentAt,jdbcType=TIMESTAMP}, #{createdUser,jdbcType=BIGINT},
+        #{createdName,jdbcType=VARCHAR}, #{createdAt,jdbcType=TIMESTAMP}, #{updatedAt,jdbcType=TIMESTAMP},
+        #{deletedAt,jdbcType=TIMESTAMP}, #{deleted,jdbcType=TINYINT})
+    </insert>
+    <insert id="insertSelective" parameterType="com.coreteam.okr.entity.Order" useGeneratedKeys="true" keyColumn="id"
+            keyProperty="id">
+        insert into `order`
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="organizationId != null">
+                organization_id,
+            </if>
+            <if test="subscribeId != null">
+                subscribe_id,
+            </if>
+            <if test="orderNo != null">
+                order_no,
+            </if>
+            <if test="orderAmount != null">
+                order_amount,
+            </if>
+            <if test="orderStatus != null">
+                order_status,
+            </if>
+            <if test="orderDate != null">
+                order_date,
+            </if>
+            <if test="paymentAt != null">
+                payment_at,
+            </if>
+            <if test="createdUser != null">
+                created_user,
+            </if>
+            <if test="createdName != null">
+                created_name,
+            </if>
+            <if test="createdAt != null">
+                created_at,
+            </if>
+            <if test="updatedAt != null">
+                updated_at,
+            </if>
+            <if test="deletedAt != null">
+                deleted_at,
+            </if>
+            <if test="deleted != null">
+                is_deleted,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="organizationId != null">
+                #{organizationId,jdbcType=BIGINT},
+            </if>
+            <if test="subscribeId != null">
+                #{subscribeId,jdbcType=BIGINT},
+            </if>
+            <if test="orderNo != null">
+                #{orderNo,jdbcType=BIGINT},
+            </if>
+            <if test="orderAmount != null">
+                #{orderAmount,jdbcType=DECIMAL},
+            </if>
+            <if test="orderStatus != null">
+                #{orderStatus,jdbcType=VARCHAR},
+            </if>
+            <if test="orderDate != null">
+                #{orderDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="paymentAt != null">
+                #{paymentAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createdUser != null">
+                #{createdUser,jdbcType=BIGINT},
+            </if>
+            <if test="createdName != null">
+                #{createdName,jdbcType=VARCHAR},
+            </if>
+            <if test="createdAt != null">
+                #{createdAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatedAt != null">
+                #{updatedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deletedAt != null">
+                #{deletedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deleted != null">
+                #{deleted,jdbcType=TINYINT},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.coreteam.okr.entity.Order">
+        update `order`
+        <set>
+            <if test="organizationId != null">
+                organization_id = #{organizationId,jdbcType=BIGINT},
+            </if>
+            <if test="subscribeId != null">
+                subscribe_id = #{subscribeId,jdbcType=BIGINT},
+            </if>
+            <if test="orderNo != null">
+                order_no = #{orderNo,jdbcType=BIGINT},
+            </if>
+            <if test="orderAmount != null">
+                order_amount = #{orderAmount,jdbcType=DECIMAL},
+            </if>
+            <if test="orderStatus != null">
+                order_status = #{orderStatus,jdbcType=VARCHAR},
+            </if>
+            <if test="orderDate != null">
+                order_date = #{orderDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="paymentAt != null">
+                payment_at = #{paymentAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createdUser != null">
+                created_user = #{createdUser,jdbcType=BIGINT},
+            </if>
+            <if test="createdName != null">
+                created_name = #{createdName,jdbcType=VARCHAR},
+            </if>
+            <if test="createdAt != null">
+                created_at = #{createdAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatedAt != null">
+                updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deletedAt != null">
+                deleted_at = #{deletedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deleted != null">
+                is_deleted = #{deleted,jdbcType=TINYINT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.coreteam.okr.entity.Order">
+        update `order`
+        set organization_id = #{organizationId,jdbcType=BIGINT},
+        subscribe_id = #{subscribeId,jdbcType=BIGINT},
+        order_no = #{orderNo,jdbcType=BIGINT},
+        order_amount = #{orderAmount,jdbcType=DECIMAL},
+        order_status = #{orderStatus,jdbcType=VARCHAR},
+        order_date = #{orderDate,jdbcType=TIMESTAMP},
+        payment_at = #{paymentAt,jdbcType=TIMESTAMP},
+        created_user = #{createdUser,jdbcType=BIGINT},
+        created_name = #{createdName,jdbcType=VARCHAR},
+        created_at = #{createdAt,jdbcType=TIMESTAMP},
+        updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+        deleted_at = #{deletedAt,jdbcType=TIMESTAMP},
+        is_deleted = #{deleted,jdbcType=TINYINT}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+</mapper>

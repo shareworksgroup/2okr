@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.coreteam.okr.dao.WeeklyPlanTemplateDAO">
+    <resultMap id="BaseResultMap" type="com.coreteam.okr.entity.WeeklyPlanTemplate">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="template_name" jdbcType="VARCHAR" property="templateName" />
+        <result column="type" jdbcType="VARCHAR" property="type" />
+        <result column="entity_id" jdbcType="BIGINT" property="entityId" />
+        <result column="enable" jdbcType="TINYINT" property="enable" />
+        <result column="created_at" jdbcType="TIMESTAMP" property="createdAt" />
+        <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt" />
+        <result column="deleted_at" jdbcType="TIMESTAMP" property="deletedAt" />
+        <result column="is_deleted" jdbcType="TINYINT" property="deleted" />
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, template_name, `type`, entity_id, `enable`, created_at, updated_at, deleted_at,
+    is_deleted
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from weekly_plan_template
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from weekly_plan_template
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.coreteam.okr.entity.WeeklyPlanTemplate" useGeneratedKeys="true">
+    insert into weekly_plan_template (template_name, `type`, entity_id,
+      `enable`, created_at, updated_at,
+      deleted_at, is_deleted)
+    values (#{templateName,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, #{entityId,jdbcType=BIGINT},
+      #{enable,jdbcType=TINYINT}, #{createdAt,jdbcType=TIMESTAMP}, #{updatedAt,jdbcType=TIMESTAMP},
+      #{deletedAt,jdbcType=TIMESTAMP}, #{deleted,jdbcType=TINYINT})
+  </insert>
+    <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.coreteam.okr.entity.WeeklyPlanTemplate" useGeneratedKeys="true">
+        insert into weekly_plan_template
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="templateName != null">
+                template_name,
+            </if>
+            <if test="type != null">
+                `type`,
+            </if>
+            <if test="entityId != null">
+                entity_id,
+            </if>
+            <if test="enable != null">
+                `enable`,
+            </if>
+            <if test="createdAt != null">
+                created_at,
+            </if>
+            <if test="updatedAt != null">
+                updated_at,
+            </if>
+            <if test="deletedAt != null">
+                deleted_at,
+            </if>
+            <if test="deleted != null">
+                is_deleted,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="templateName != null">
+                #{templateName,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=VARCHAR},
+            </if>
+            <if test="entityId != null">
+                #{entityId,jdbcType=BIGINT},
+            </if>
+            <if test="enable != null">
+                #{enable,jdbcType=TINYINT},
+            </if>
+            <if test="createdAt != null">
+                #{createdAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatedAt != null">
+                #{updatedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deletedAt != null">
+                #{deletedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deleted != null">
+                #{deleted,jdbcType=TINYINT},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.coreteam.okr.entity.WeeklyPlanTemplate">
+        update weekly_plan_template
+        <set>
+            <if test="templateName != null">
+                template_name = #{templateName,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null">
+                `type` = #{type,jdbcType=VARCHAR},
+            </if>
+            <if test="entityId != null">
+                entity_id = #{entityId,jdbcType=BIGINT},
+            </if>
+            <if test="enable != null">
+                `enable` = #{enable,jdbcType=TINYINT},
+            </if>
+            <if test="createdAt != null">
+                created_at = #{createdAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatedAt != null">
+                updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deletedAt != null">
+                deleted_at = #{deletedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deleted != null">
+                is_deleted = #{deleted,jdbcType=TINYINT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.coreteam.okr.entity.WeeklyPlanTemplate">
+    update weekly_plan_template
+    set template_name = #{templateName,jdbcType=VARCHAR},
+      `type` = #{type,jdbcType=VARCHAR},
+      entity_id = #{entityId,jdbcType=BIGINT},
+      `enable` = #{enable,jdbcType=TINYINT},
+      created_at = #{createdAt,jdbcType=TIMESTAMP},
+      updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+      deleted_at = #{deletedAt,jdbcType=TIMESTAMP},
+      is_deleted = #{deleted,jdbcType=TINYINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+    <select id="selectByTypeAndEntityId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from weekly_plan_template
+        where `type` = #{type,jdbcType=VARCHAR}
+        and entity_id = #{entityId,jdbcType=BIGINT}
+        and is_deleted = 0
+    </select>
+</mapper>

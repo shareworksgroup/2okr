@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.coreteam.okr.dao.WeeklyPlanTemplateItemDAO">
+    <resultMap id="BaseResultMap" type="com.coreteam.okr.entity.WeeklyPlanTemplateItem">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="template_id" jdbcType="BIGINT" property="templateId"/>
+        <result column="order" jdbcType="INTEGER" property="order"/>
+        <result column="color" jdbcType="VARCHAR" property="color"/>
+        <result column="need_carry" jdbcType="TINYINT" property="needCarry"/>
+        <result column="created_at" jdbcType="TIMESTAMP" property="createdAt"/>
+        <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt"/>
+        <result column="deleted_at" jdbcType="TIMESTAMP" property="deletedAt"/>
+        <result column="is_deleted" jdbcType="TINYINT" property="deleted"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, `name`, template_id, `order`, color, need_carry, created_at, updated_at, deleted_at,
+    is_deleted
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from weekly_plan_template_item
+        where id = #{id,jdbcType=BIGINT}
+        and is_deleted = 0
+    </select>
+    <update id="deleteByPrimaryKey" parameterType="java.lang.Long">
+      update  weekly_plan_template_item
+      set is_deleted = 1, deleted_at = now()
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.coreteam.okr.entity.WeeklyPlanTemplateItem"
+            useGeneratedKeys="true">
+    insert into weekly_plan_template_item (`name`, template_id, `order`,
+      color, need_carry, created_at,
+      updated_at, deleted_at, is_deleted
+      )
+    values (#{name,jdbcType=VARCHAR}, #{templateId,jdbcType=BIGINT}, #{order,jdbcType=INTEGER},
+      #{color,jdbcType=VARCHAR}, #{needCarry,jdbcType=TINYINT}, #{createdAt,jdbcType=TIMESTAMP},
+      #{updatedAt,jdbcType=TIMESTAMP}, #{deletedAt,jdbcType=TIMESTAMP}, #{deleted,jdbcType=TINYINT}
+      )
+  </insert>
+    <insert id="insertSelective" keyColumn="id" keyProperty="id"
+            parameterType="com.coreteam.okr.entity.WeeklyPlanTemplateItem" useGeneratedKeys="true">
+        insert into weekly_plan_template_item
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">
+                `name`,
+            </if>
+            <if test="templateId != null">
+                template_id,
+            </if>
+            <if test="order != null">
+                `order`,
+            </if>
+            <if test="color != null">
+                color,
+            </if>
+            <if test="needCarry != null">
+                need_carry,
+            </if>
+            <if test="createdAt != null">
+                created_at,
+            </if>
+            <if test="updatedAt != null">
+                updated_at,
+            </if>
+            <if test="deletedAt != null">
+                deleted_at,
+            </if>
+            <if test="deleted != null">
+                is_deleted,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="templateId != null">
+                #{templateId,jdbcType=BIGINT},
+            </if>
+            <if test="order != null">
+                #{order,jdbcType=INTEGER},
+            </if>
+            <if test="color != null">
+                #{color,jdbcType=VARCHAR},
+            </if>
+            <if test="needCarry != null">
+                #{needCarry,jdbcType=TINYINT},
+            </if>
+            <if test="createdAt != null">
+                #{createdAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatedAt != null">
+                #{updatedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deletedAt != null">
+                #{deletedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deleted != null">
+                #{deleted,jdbcType=TINYINT},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.coreteam.okr.entity.WeeklyPlanTemplateItem">
+        update weekly_plan_template_item
+        <set>
+            <if test="name != null">
+                `name` = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="templateId != null">
+                template_id = #{templateId,jdbcType=BIGINT},
+            </if>
+            <if test="order != null">
+                `order` = #{order,jdbcType=INTEGER},
+            </if>
+            <if test="color != null">
+                color = #{color,jdbcType=VARCHAR},
+            </if>
+            <if test="needCarry != null">
+                need_carry = #{needCarry,jdbcType=TINYINT},
+            </if>
+            <if test="createdAt != null">
+                created_at = #{createdAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatedAt != null">
+                updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deletedAt != null">
+                deleted_at = #{deletedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deleted != null">
+                is_deleted = #{deleted,jdbcType=TINYINT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.coreteam.okr.entity.WeeklyPlanTemplateItem">
+    update weekly_plan_template_item
+    set `name` = #{name,jdbcType=VARCHAR},
+      template_id = #{templateId,jdbcType=BIGINT},
+      `order` = #{order,jdbcType=INTEGER},
+      color = #{color,jdbcType=VARCHAR},
+      need_carry = #{needCarry,jdbcType=TINYINT},
+      created_at = #{createdAt,jdbcType=TIMESTAMP},
+      updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+      deleted_at = #{deletedAt,jdbcType=TIMESTAMP},
+      is_deleted = #{deleted,jdbcType=TINYINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+    <select id="selectByTemplateId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from weekly_plan_template_item
+        where template_id = #{templateId,jdbcType=BIGINT}
+        and is_deleted = 0
+        order by `order`
+    </select>
+</mapper>

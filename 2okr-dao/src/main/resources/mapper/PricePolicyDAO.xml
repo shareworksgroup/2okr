@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.coreteam.okr.dao.PricePolicyDAO">
+    <resultMap id="BaseResultMap" type="com.coreteam.okr.entity.PricePolicy">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="policy_name" jdbcType="VARCHAR" property="policyName"/>
+        <result column="level" jdbcType="INTEGER" property="level"/>
+        <result column="min_user_amount" jdbcType="INTEGER" property="minUserAmount"/>
+        <result column="max_user_amount" jdbcType="INTEGER" property="maxUserAmount"/>
+        <result column="life_month" jdbcType="INTEGER" property="lifeMonth"/>
+        <result column="unit" jdbcType="VARCHAR" property="unit"/>
+        <result column="policy_type" jdbcType="VARCHAR" property="policyType"/>
+        <result column="price" jdbcType="DECIMAL" property="price"/>
+        <result column="policy_status" jdbcType="VARCHAR" property="policyStatus"/>
+        <result column="created_user" jdbcType="BIGINT" property="createdUser"/>
+        <result column="created_name" jdbcType="VARCHAR" property="createdName"/>
+        <result column="created_at" jdbcType="TIMESTAMP" property="createdAt"/>
+        <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt"/>
+        <result column="deleted_at" jdbcType="TIMESTAMP" property="deletedAt"/>
+        <result column="is_deleted" jdbcType="TINYINT" property="deleted"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, policy_name, `level`, min_user_amount, max_user_amount, life_month, unit, policy_type,
+        price, policy_status, created_user, created_name, created_at, updated_at, deleted_at,
+        is_deleted
+    </sql>
+
+    <select id="getFreePricePolicy" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from price_policy
+        where policy_status = 'EFFECTIVE'
+        and policy_type='FREE'
+        and is_deleted=0
+    </select>
+
+    <select id="getSuitablePricePolicy" parameterType="java.util.Map" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from price_policy
+        where
+        ( min_user_amount <![CDATA[<=]]> #{size,jdbcType=INTEGER} and max_user_amount > #{size,jdbcType=INTEGER} )
+        and life_month =  #{maintenancePeriod,jdbcType=INTEGER}
+        and policy_status = 'EFFECTIVE'
+        and policy_type='PAID'
+        and is_deleted=0
+    </select>
+
+    <select id="listPricePolices" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from price_policy
+        where policy_status = 'EFFECTIVE'
+        and is_deleted=0
+        order by level
+    </select>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from price_policy
+        where id = #{id,jdbcType=BIGINT}
+        and is_deleted=0
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from price_policy
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="com.coreteam.okr.entity.PricePolicy" useGeneratedKeys="true" keyColumn="id"
+            keyProperty="id">
+        insert into price_policy (id, policy_name, `level`,
+        min_user_amount, max_user_amount, life_month,
+        unit, policy_type, price,
+        policy_status, created_user, created_name,
+        created_at, updated_at, deleted_at,
+        is_deleted)
+        values (#{id,jdbcType=BIGINT}, #{policyName,jdbcType=VARCHAR}, #{level,jdbcType=INTEGER},
+        #{minUserAmount,jdbcType=INTEGER}, #{maxUserAmount,jdbcType=INTEGER}, #{lifeMonth,jdbcType=INTEGER},
+        #{unit,jdbcType=VARCHAR}, #{policyType,jdbcType=VARCHAR}, #{price,jdbcType=DECIMAL},
+        #{policyStatus,jdbcType=VARCHAR}, #{createdUser,jdbcType=BIGINT}, #{createdName,jdbcType=VARCHAR},
+        #{createdAt,jdbcType=TIMESTAMP}, #{updatedAt,jdbcType=TIMESTAMP}, #{deletedAt,jdbcType=TIMESTAMP},
+        #{deleted,jdbcType=TINYINT})
+    </insert>
+    <insert id="insertSelective" parameterType="com.coreteam.okr.entity.PricePolicy" useGeneratedKeys="true" keyColumn="id"
+            keyProperty="id">
+        insert into price_policy
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="policyName != null">
+                policy_name,
+            </if>
+            <if test="level != null">
+                `level`,
+            </if>
+            <if test="minUserAmount != null">
+                min_user_amount,
+            </if>
+            <if test="maxUserAmount != null">
+                max_user_amount,
+            </if>
+            <if test="lifeMonth != null">
+                life_month,
+            </if>
+            <if test="unit != null">
+                unit,
+            </if>
+            <if test="policyType != null">
+                policy_type,
+            </if>
+            <if test="price != null">
+                price,
+            </if>
+            <if test="policyStatus != null">
+                policy_status,
+            </if>
+            <if test="createdUser != null">
+                created_user,
+            </if>
+            <if test="createdName != null">
+                created_name,
+            </if>
+            <if test="createdAt != null">
+                created_at,
+            </if>
+            <if test="updatedAt != null">
+                updated_at,
+            </if>
+            <if test="deletedAt != null">
+                deleted_at,
+            </if>
+            <if test="deleted != null">
+                is_deleted,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="policyName != null">
+                #{policyName,jdbcType=VARCHAR},
+            </if>
+            <if test="level != null">
+                #{level,jdbcType=INTEGER},
+            </if>
+            <if test="minUserAmount != null">
+                #{minUserAmount,jdbcType=INTEGER},
+            </if>
+            <if test="maxUserAmount != null">
+                #{maxUserAmount,jdbcType=INTEGER},
+            </if>
+            <if test="lifeMonth != null">
+                #{lifeMonth,jdbcType=INTEGER},
+            </if>
+            <if test="unit != null">
+                #{unit,jdbcType=VARCHAR},
+            </if>
+            <if test="policyType != null">
+                #{policyType,jdbcType=VARCHAR},
+            </if>
+            <if test="price != null">
+                #{price,jdbcType=DECIMAL},
+            </if>
+            <if test="policyStatus != null">
+                #{policyStatus,jdbcType=VARCHAR},
+            </if>
+            <if test="createdUser != null">
+                #{createdUser,jdbcType=BIGINT},
+            </if>
+            <if test="createdName != null">
+                #{createdName,jdbcType=VARCHAR},
+            </if>
+            <if test="createdAt != null">
+                #{createdAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatedAt != null">
+                #{updatedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deletedAt != null">
+                #{deletedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deleted != null">
+                #{deleted,jdbcType=TINYINT},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.coreteam.okr.entity.PricePolicy">
+        update price_policy
+        <set>
+            <if test="policyName != null">
+                policy_name = #{policyName,jdbcType=VARCHAR},
+            </if>
+            <if test="level != null">
+                `level` = #{level,jdbcType=INTEGER},
+            </if>
+            <if test="minUserAmount != null">
+                min_user_amount = #{minUserAmount,jdbcType=INTEGER},
+            </if>
+            <if test="maxUserAmount != null">
+                max_user_amount = #{maxUserAmount,jdbcType=INTEGER},
+            </if>
+            <if test="lifeMonth != null">
+                life_month = #{lifeMonth,jdbcType=INTEGER},
+            </if>
+            <if test="unit != null">
+                unit = #{unit,jdbcType=VARCHAR},
+            </if>
+            <if test="policyType != null">
+                policy_type = #{policyType,jdbcType=VARCHAR},
+            </if>
+            <if test="price != null">
+                price = #{price,jdbcType=DECIMAL},
+            </if>
+            <if test="policyStatus != null">
+                policy_status = #{policyStatus,jdbcType=VARCHAR},
+            </if>
+            <if test="createdUser != null">
+                created_user = #{createdUser,jdbcType=BIGINT},
+            </if>
+            <if test="createdName != null">
+                created_name = #{createdName,jdbcType=VARCHAR},
+            </if>
+            <if test="createdAt != null">
+                created_at = #{createdAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatedAt != null">
+                updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deletedAt != null">
+                deleted_at = #{deletedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="isDeleted != null">
+                is_deleted = #{deleted,jdbcType=TINYINT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.coreteam.okr.entity.PricePolicy">
+        update price_policy
+        set policy_name = #{policyName,jdbcType=VARCHAR},
+        `level` = #{level,jdbcType=INTEGER},
+        min_user_amount = #{minUserAmount,jdbcType=INTEGER},
+        max_user_amount = #{maxUserAmount,jdbcType=INTEGER},
+        life_month = #{lifeMonth,jdbcType=INTEGER},
+        unit = #{unit,jdbcType=VARCHAR},
+        policy_type = #{policyType,jdbcType=VARCHAR},
+        price = #{price,jdbcType=DECIMAL},
+        policy_status = #{policyStatus,jdbcType=VARCHAR},
+        created_user = #{createdUser,jdbcType=BIGINT},
+        created_name = #{createdName,jdbcType=VARCHAR},
+        created_at = #{createdAt,jdbcType=TIMESTAMP},
+        updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+        deleted_at = #{deletedAt,jdbcType=TIMESTAMP},
+        is_deleted = #{deleted,jdbcType=TINYINT}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+</mapper>

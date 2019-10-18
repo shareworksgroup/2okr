@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.coreteam.okr.dao.KeyResultCommentReplyDAO">
+    <resultMap id="BaseResultMap" type="com.coreteam.okr.entity.KeyResultCommentReply">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="comment_id" jdbcType="BIGINT" property="commentId"/>
+        <result column="replay_user_id" jdbcType="BIGINT" property="replayUserId"/>
+        <result column="replay_user_name" jdbcType="VARCHAR" property="replayUserName"/>
+        <result column="context" jdbcType="VARCHAR" property="context"/>
+        <result column="created_at" jdbcType="TIMESTAMP" property="createdAt"/>
+        <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt"/>
+        <result column="deleted_at" jdbcType="TIMESTAMP" property="deletedAt"/>
+        <result column="is_deleted" jdbcType="TINYINT" property="deleted"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, comment_id, replay_user_id, replay_user_name, context, created_at, updated_at,
+        deleted_at, is_deleted
+    </sql>
+
+    <select id="listRepaysByCommentId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from key_result_comment_reply
+        where comment_id = #{commentId,jdbcType=BIGINT}
+        and is_deleted = 0
+        order by created_at
+    </select>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from key_result_comment_reply
+        where id = #{id,jdbcType=BIGINT}
+        and is_deleted = 0
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from key_result_comment_reply
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="com.coreteam.okr.entity.KeyResultCommentReply">
+        insert into key_result_comment_reply (id, comment_id, replay_user_id,
+        replay_user_name, context, created_at,
+        updated_at, deleted_at, is_deleted
+        )
+        values (#{id,jdbcType=BIGINT}, #{commentId,jdbcType=BIGINT}, #{replayUserId,jdbcType=BIGINT},
+        #{replayUserName,jdbcType=VARCHAR}, #{context,jdbcType=VARCHAR}, #{createdAt,jdbcType=TIMESTAMP},
+        #{updatedAt,jdbcType=TIMESTAMP}, #{deletedAt,jdbcType=TIMESTAMP}, #{deleted,jdbcType=TINYINT}
+        )
+    </insert>
+    <insert id="insertSelective" parameterType="com.coreteam.okr.entity.KeyResultCommentReply">
+        insert into key_result_comment_reply
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="commentId != null">
+                comment_id,
+            </if>
+            <if test="replayUserId != null">
+                replay_user_id,
+            </if>
+            <if test="replayUserName != null">
+                replay_user_name,
+            </if>
+            <if test="context != null">
+                context,
+            </if>
+            <if test="createdAt != null">
+                created_at,
+            </if>
+            <if test="updatedAt != null">
+                updated_at,
+            </if>
+            <if test="deletedAt != null">
+                deleted_at,
+            </if>
+            <if test="deleted != null">
+                is_deleted,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="commentId != null">
+                #{commentId,jdbcType=BIGINT},
+            </if>
+            <if test="replayUserId != null">
+                #{replayUserId,jdbcType=BIGINT},
+            </if>
+            <if test="replayUserName != null">
+                #{replayUserName,jdbcType=VARCHAR},
+            </if>
+            <if test="context != null">
+                #{context,jdbcType=VARCHAR},
+            </if>
+            <if test="createdAt != null">
+                #{createdAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatedAt != null">
+                #{updatedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deletedAt != null">
+                #{deletedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deleted != null">
+                #{deleted,jdbcType=TINYINT},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.coreteam.okr.entity.KeyResultCommentReply">
+        update key_result_comment_reply
+        <set>
+            <if test="commentId != null">
+                comment_id = #{commentId,jdbcType=BIGINT},
+            </if>
+            <if test="replayUserId != null">
+                replay_user_id = #{replayUserId,jdbcType=BIGINT},
+            </if>
+            <if test="replayUserName != null">
+                replay_user_name = #{replayUserName,jdbcType=VARCHAR},
+            </if>
+            <if test="context != null">
+                context = #{context,jdbcType=VARCHAR},
+            </if>
+            <if test="createdAt != null">
+                created_at = #{createdAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatedAt != null">
+                updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deletedAt != null">
+                deleted_at = #{deletedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deleted != null">
+                is_deleted = #{deleted,jdbcType=TINYINT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.coreteam.okr.entity.KeyResultCommentReply">
+        update key_result_comment_reply
+        set comment_id = #{commentId,jdbcType=BIGINT},
+        replay_user_id = #{replayUserId,jdbcType=BIGINT},
+        replay_user_name = #{replayUserName,jdbcType=VARCHAR},
+        context = #{context,jdbcType=VARCHAR},
+        created_at = #{createdAt,jdbcType=TIMESTAMP},
+        updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+        deleted_at = #{deletedAt,jdbcType=TIMESTAMP},
+        is_deleted = #{deleted,jdbcType=TINYINT}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+</mapper>

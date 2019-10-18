@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.coreteam.okr.dao.MemberSettingDAO">
+    <resultMap id="BaseResultMap" type="com.coreteam.okr.entity.MemberSetting">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="setting_type" jdbcType="VARCHAR" property="settingType"/>
+        <result column="setting_key" jdbcType="VARCHAR" property="settingKey"/>
+        <result column="value" jdbcType="VARCHAR" property="value"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="created_at" jdbcType="TIMESTAMP" property="createdAt"/>
+        <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt"/>
+        <result column="deleted_at" jdbcType="TIMESTAMP" property="deletedAt"/>
+        <result column="deleted" jdbcType="TINYINT" property="deleted"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, user_id, setting_type, setting_key, `value`, remark, created_at, updated_at,
+        deleted_at, deleted
+    </sql>
+    <select id="getSettingByKey" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from member_setting
+        where user_id = #{userId,jdbcType=BIGINT}
+        and setting_type=#{type,jdbcType=VARCHAR}
+        and setting_key=#{key,jdbcType=VARCHAR}
+        and deleted = 0
+    </select>
+    <select id="listSettingByType" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from member_setting
+        where user_id = #{userId,jdbcType=BIGINT}
+        and setting_type=#{type,jdbcType=VARCHAR}
+        and deleted = 0
+    </select>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from member_setting
+        where id = #{id,jdbcType=BIGINT}
+        and deleted = 0
+    </select>
+    <update id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        update member_setting
+        set deleted = 1, deleted_at = now()
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <insert id="insert" parameterType="com.coreteam.okr.entity.MemberSetting">
+        insert into member_setting (id, user_id, setting_type,
+        setting_key, `value`, remark,
+        created_at, updated_at, deleted_at,
+        deleted)
+        values (#{id,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{settingType,jdbcType=VARCHAR},
+        #{settingKey,jdbcType=VARCHAR}, #{value,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR},
+        #{createdAt,jdbcType=TIMESTAMP}, #{updatedAt,jdbcType=TIMESTAMP}, #{deletedAt,jdbcType=TIMESTAMP},
+        #{deleted,jdbcType=TINYINT})
+    </insert>
+    <insert id="insertSelective" parameterType="com.coreteam.okr.entity.MemberSetting">
+        insert into member_setting
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="settingType != null">
+                setting_type,
+            </if>
+            <if test="settingKey != null">
+                setting_key,
+            </if>
+            <if test="value != null">
+                `value`,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+            <if test="createdAt != null">
+                created_at,
+            </if>
+            <if test="updatedAt != null">
+                updated_at,
+            </if>
+            <if test="deletedAt != null">
+                deleted_at,
+            </if>
+            <if test="deleted != null">
+                deleted,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=BIGINT},
+            </if>
+            <if test="settingType != null">
+                #{settingType,jdbcType=VARCHAR},
+            </if>
+            <if test="settingKey != null">
+                #{settingKey,jdbcType=VARCHAR},
+            </if>
+            <if test="value != null">
+                #{value,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="createdAt != null">
+                #{createdAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatedAt != null">
+                #{updatedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deletedAt != null">
+                #{deletedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deleted != null">
+                #{deleted,jdbcType=TINYINT},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.coreteam.okr.entity.MemberSetting">
+        update member_setting
+        <set>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=BIGINT},
+            </if>
+            <if test="settingType != null">
+                setting_type = #{settingType,jdbcType=VARCHAR},
+            </if>
+            <if test="settingKey != null">
+                setting_key = #{settingKey,jdbcType=VARCHAR},
+            </if>
+            <if test="value != null">
+                `value` = #{value,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="createdAt != null">
+                created_at = #{createdAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatedAt != null">
+                updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deletedAt != null">
+                deleted_at = #{deletedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deleted != null">
+                deleted = #{deleted,jdbcType=TINYINT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.coreteam.okr.entity.MemberSetting">
+        update member_setting
+        set user_id = #{userId,jdbcType=BIGINT},
+        setting_type = #{settingType,jdbcType=VARCHAR},
+        setting_key = #{settingKey,jdbcType=VARCHAR},
+        `value` = #{value,jdbcType=VARCHAR},
+        remark = #{remark,jdbcType=VARCHAR},
+        created_at = #{createdAt,jdbcType=TIMESTAMP},
+        updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+        deleted_at = #{deletedAt,jdbcType=TIMESTAMP},
+        deleted = #{deleted,jdbcType=TINYINT}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <delete id="deleteByType">
+        delete from member_setting
+        where user_id = #{userId,jdbcType=BIGINT} and setting_type = #{type,jdbcType=VARCHAR}
+    </delete>
+</mapper>

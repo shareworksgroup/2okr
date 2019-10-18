@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.coreteam.okr.dao.ObjectiveDalilyProgressDAO">
+  <resultMap id="BaseResultMap" type="com.coreteam.okr.entity.ObjectiveDalilyProgress">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="objective_id" jdbcType="BIGINT" property="objectiveId" />
+    <result column="date" jdbcType="VARCHAR" property="date" />
+    <result column="progress" jdbcType="DOUBLE" property="progress" />
+    <result column="expect_progress" jdbcType="DOUBLE" property="expectProgress" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="created_at" jdbcType="TIMESTAMP" property="createdAt" />
+    <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt" />
+    <result column="deleted_at" jdbcType="TIMESTAMP" property="deletedAt" />
+    <result column="is_deleted" jdbcType="TINYINT" property="deleted" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, objective_id, `date`, progress, expect_progress, `status`, created_at, updated_at, 
+    deleted_at, is_deleted
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from objective_dalily_progress
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from objective_dalily_progress
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.coreteam.okr.entity.ObjectiveDalilyProgress">
+    insert into objective_dalily_progress (id, objective_id, `date`, 
+      progress, expect_progress, `status`, 
+      created_at, updated_at, deleted_at, 
+      is_deleted)
+    values (#{id,jdbcType=BIGINT}, #{objectiveId,jdbcType=BIGINT}, #{date,jdbcType=VARCHAR}, 
+      #{progress,jdbcType=DOUBLE}, #{expectProgress,jdbcType=DOUBLE}, #{status,jdbcType=VARCHAR}, 
+      #{createdAt,jdbcType=TIMESTAMP}, #{updatedAt,jdbcType=TIMESTAMP}, #{deletedAt,jdbcType=TIMESTAMP}, 
+      #{deleted,jdbcType=TINYINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.coreteam.okr.entity.ObjectiveDalilyProgress">
+    insert into objective_dalily_progress
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="objectiveId != null">
+        objective_id,
+      </if>
+      <if test="date != null">
+        `date`,
+      </if>
+      <if test="progress != null">
+        progress,
+      </if>
+      <if test="expectProgress != null">
+        expect_progress,
+      </if>
+      <if test="status != null">
+        `status`,
+      </if>
+      <if test="createdAt != null">
+        created_at,
+      </if>
+      <if test="updatedAt != null">
+        updated_at,
+      </if>
+      <if test="deletedAt != null">
+        deleted_at,
+      </if>
+      <if test="deleted != null">
+        is_deleted,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="objectiveId != null">
+        #{objectiveId,jdbcType=BIGINT},
+      </if>
+      <if test="date != null">
+        #{date,jdbcType=VARCHAR},
+      </if>
+      <if test="progress != null">
+        #{progress,jdbcType=DOUBLE},
+      </if>
+      <if test="expectProgress != null">
+        #{expectProgress,jdbcType=DOUBLE},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="createdAt != null">
+        #{createdAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedAt != null">
+        #{updatedAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deletedAt != null">
+        #{deletedAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleted != null">
+        #{deleted,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.coreteam.okr.entity.ObjectiveDalilyProgress">
+    update objective_dalily_progress
+    <set>
+      <if test="objectiveId != null">
+        objective_id = #{objectiveId,jdbcType=BIGINT},
+      </if>
+      <if test="date != null">
+        `date` = #{date,jdbcType=VARCHAR},
+      </if>
+      <if test="progress != null">
+        progress = #{progress,jdbcType=DOUBLE},
+      </if>
+      <if test="expectProgress != null">
+        expect_progress = #{expectProgress,jdbcType=DOUBLE},
+      </if>
+      <if test="status != null">
+        `status` = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="createdAt != null">
+        created_at = #{createdAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedAt != null">
+        updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deletedAt != null">
+        deleted_at = #{deletedAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deleted != null">
+        is_deleted = #{deleted,jdbcType=TINYINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.coreteam.okr.entity.ObjectiveDalilyProgress">
+    update objective_dalily_progress
+    set objective_id = #{objectiveId,jdbcType=BIGINT},
+      `date` = #{date,jdbcType=VARCHAR},
+      progress = #{progress,jdbcType=DOUBLE},
+      expect_progress = #{expectProgress,jdbcType=DOUBLE},
+      `status` = #{status,jdbcType=VARCHAR},
+      created_at = #{createdAt,jdbcType=TIMESTAMP},
+      updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+      deleted_at = #{deletedAt,jdbcType=TIMESTAMP},
+      is_deleted = #{deleted,jdbcType=TINYINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

@@ -54,18 +54,6 @@
  |   2okr-web-api |    web API |
  |   2okr-wx-api  |    小程序API |
 
-## Contributors
-  - aimilin.yu
-  - allen.luo
-  - chico.zeng
-  - candy.zhang
-  - dean.zhu 
-  - 蒋建勇
-  - jianxiong.xie
-  - lang.yang
-  - 铄辉 
-  - sean.deng
-  - tao.li
 
 
 

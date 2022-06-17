@@ -37,7 +37,7 @@
         <jwt.version>1.0.9.RELEASE</jwt.version>
         <cloud.version>2.1.1.RELEASE</cloud.version>
         <feign.version>8.18.0</feign.version>
-        <fastjson.version>1.2.58</fastjson.version>
+        <fastjson.version>1.2.83</fastjson.version>
         <freamwork.resourceserver-version>1.0.0-SNAPSHOT</freamwork.resourceserver-version>
         <binarywang-weixin.version>2.9.0</binarywang-weixin.version>
 
